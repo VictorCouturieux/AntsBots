@@ -33,18 +33,9 @@ void Bot::makeMoves()
 
     //picks out moves for each ant
     for(int ant=0; ant<(int)state.myAnts.size(); ant++)
-    {
         for(int d=0; d<TDIRECTIONS; d++)
-        {
-            Location loc = state.getLocation(state.myAnts[ant], d);
-
-            if(!state.grid[loc.row][loc.col].isWater)
-            {
-                state.makeMove(state.myAnts[ant], d);
+            if(doMoveDirection(state.myAnts[ant], d))
                 break;
-            }
-        }
-    }
 
     state.bug << "time taken: " << state.timer.getTime() << "ms" << endl << endl;
 };
@@ -58,3 +49,20 @@ void Bot::endTurn()
 
     cout << "go" << endl;
 };
+
+bool Bot::doMoveDirection(const Location &antLoc, int dir)
+{
+    Location newLoc = state.getLocation(antLoc, dir);
+    if (state.isFree(newLoc) && orders.find(newLoc) == orders.end())
+    {
+        state.makeMove(antLoc, dir);
+        orders.insert( pair< Location, Location >(newLoc, antLoc) );
+        return true;
+    }
+    return false;
+}
+
+bool Bot::doMoveLocation(const Location& antLoc, const Location& destLoc)
+{
+    
+}

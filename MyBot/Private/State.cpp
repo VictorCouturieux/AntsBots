@@ -104,6 +104,15 @@ void State::updateVisionInformation()
             }
         }
     }
+}
+
+bool State::isFree(const Location& loc)
+{
+    for (int antIdx = 0 ; antIdx < myAnts.size() ; ++antIdx )
+        if ( grid[loc.row][loc.col].isWater || loc == myAnts[ antIdx ] ) 
+            return false;
+
+    return true;
 };
 
 /*
