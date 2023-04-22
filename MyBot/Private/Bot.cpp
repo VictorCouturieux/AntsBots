@@ -87,6 +87,25 @@ void Bot::makeMoves()
                 break;
     */
 
+    // add new hills to set
+    for (Location enemyHill : state.enemyHills)
+        if (std::find(enemyHillsFounded.begin(), enemyHillsFounded.end(), enemyHill) == enemyHillsFounded.end())
+            enemyHillsFounded.push_back(enemyHill);
+
+    // attack hills
+    vector<Route> hillRoutes( nbAnts*enemyHillsFounded.size());
+    ID=0;
+    for (Location hillLoc : enemyHillsFounded)
+        for(Location ant : state.myAnts)
+            if (orders.find(ant) == orders.end())
+            {
+                const double distance = state.distance(ant, hillLoc);
+                hillRoutes[ID++] = Route(ant, hillLoc, distance);
+            }
+    sort( hillRoutes.begin(), hillRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
+    for (Route route : hillRoutes)
+        doMoveLocation(route.Start, route.End);
+    
     // explore unseen areas
     for(Location antLoc : state.myAnts)
     {
@@ -95,7 +114,7 @@ void Bot::makeMoves()
             vector<Route> unseenRoutes;
             for (Location unseenLoc  : unseenLocations)
             {
-                int distance = state.distance(antLoc, unseenLoc);
+                const double distance = state.distance(antLoc, unseenLoc);
                 unseenRoutes.push_back(Route(antLoc, unseenLoc, distance));
             }
             sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );

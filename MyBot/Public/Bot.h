@@ -20,6 +20,8 @@ struct Bot
     TrackerMap<Location, Location> targets;
     // Track all location we have not seen during the game
     std::vector<Location> unseenLocations;
+    // Track all enemy hills we have found
+    std::vector<Location> enemyHillsFounded;
 
     Bot();
 
