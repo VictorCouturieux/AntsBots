@@ -31,6 +31,27 @@ void Bot::makeMoves()
     state.bug << "turn " << state.turn << ":" << endl;
     //state.bug << state << endl;
 
+    // add all locations to unseen tiles set, run once
+    if (unseenLocations.empty())
+    {
+        for (int row = 0; row < state.rows; row ++)
+        {
+            for (int col = 0; col < state.cols; col ++)
+            {
+                unseenLocations.push_back(Location(row, col));
+            }
+        }
+    }
+    // remove any tiles that can be seen, run each turn
+    for (int i = 0; i < unseenLocations.size(); i++)
+    {
+        Location loc = unseenLocations[i];
+        if (state.grid[loc.row][loc.col].isVisible)
+        {
+            unseenLocations.erase(unseenLocations.begin() + i);
+        }
+    }
+
     int nbFood = state.food.size();
     int nbAnts = state.myAnts.size();
     // Reset the last turn maps
@@ -65,6 +86,23 @@ void Bot::makeMoves()
             if(doMoveDirection(state.myAnts[ant], d))
                 break;
     */
+
+    // explore unseen areas
+    for(Location antLoc : state.myAnts)
+    {
+        if (orders.find(antLoc) == orders.end())
+        {
+            vector<Route> unseenRoutes;
+            for (Location unseenLoc  : unseenLocations)
+            {
+                int distance = state.distance(antLoc, unseenLoc);
+                unseenRoutes.push_back(Route(antLoc, unseenLoc, distance));
+            }
+            sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
+            for (Route route : unseenRoutes)
+                doMoveLocation(route.Start, route.End);
+        }
+    }
 
     // Moving out from our hills
     for(const Location hillLoc : state.myHills)

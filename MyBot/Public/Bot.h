@@ -18,6 +18,8 @@ struct Bot
     std::map< Location, Location > orders;
     // This map tracks the foods targets and associated ants
     TrackerMap<Location, Location> targets;
+    // Track all location we have not seen during the game
+    std::vector<Location> unseenLocations;
 
     Bot();
 
