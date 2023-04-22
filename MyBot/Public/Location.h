@@ -1,5 +1,5 @@
 #pragma once
-
+#include <string>
 
 /*
     struct for representing locations in the grid.
@@ -19,10 +19,19 @@ struct Location
         col = c;
     };
 
+    std::string ToString() const
+    {
+        return "[" + std::to_string(row) + ", " + std::to_string(col) + "]";
+    }
     // To use == operator
     bool operator==(const Location & other) const
     {
         return ( row == other.row && col == other.col );
+    }
+    // To use != operator
+    bool operator!=(const Location & other) const
+    {
+        return ( row != other.row || col != other.col );
     }
 
     // To make std::map works

@@ -7,6 +7,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <array>
 #include <queue>
 #include <stack>
 #include <stdint.h>
@@ -62,7 +63,10 @@ struct State
 
     void updateVisionInformation();
 
+    // Check whether the location is free or not
     bool isFree(const Location & loc);
+    // Takes a location and a destination and returns a list of the closest direction "as the crow flies", returning its directions array size (max:2)
+    int getClosestDirections(const Location &antLoc, const Location &destLoc, std::array< int, 2 > & directions);
 };
 
 std::ostream& operator<<(std::ostream &os, const State &state);

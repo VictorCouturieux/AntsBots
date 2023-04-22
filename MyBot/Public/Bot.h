@@ -1,8 +1,11 @@
 #pragma once
 
-#include <map>
+#include <array>
+#include <algorithm>
 
 #include "State.h"
+#include "Route.h"
+#include "TrackerMap.h"
 
 /*
     This struct represents your bot in the game of Ants
@@ -13,6 +16,8 @@ struct Bot
     
     // Track what moves we have issued
     std::map< Location, Location > orders;
+    // This map tracks the foods targets and associated ants
+    TrackerMap<Location, Location> targets;
 
     Bot();
 

@@ -113,6 +113,23 @@ bool State::isFree(const Location& loc)
             return false;
 
     return true;
+}
+
+int State::getClosestDirections(const Location& antLoc, const Location& destLoc, std::array<int, 2>& directions)
+{
+    int nbDirections=0;
+
+    if (antLoc.row > destLoc.row)
+        directions[ nbDirections++ ] = 0; // N
+    else if (antLoc.row < destLoc.row)
+        directions[ nbDirections++ ] = 2; // S
+
+    if(antLoc.col > destLoc.col)
+        directions[ nbDirections++ ] = 3; // W
+    else if(antLoc.col < destLoc.col)
+        directions[ nbDirections++ ] = 1; // E
+    
+    return nbDirections;
 };
 
 /*
