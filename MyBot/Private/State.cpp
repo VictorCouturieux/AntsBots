@@ -120,14 +120,29 @@ int State::getClosestDirections(const Location& antLoc, const Location& destLoc,
     int nbDirections=0;
 
     if (antLoc.row > destLoc.row)
-        directions[ nbDirections++ ] = 0; // N
+        if (abs(antLoc.row - destLoc.row) > abs(destLoc.row + rows - antLoc.row))
+            directions[ nbDirections++ ] = 2; // S
+        else
+            directions[ nbDirections++ ] = 0; // N
     else if (antLoc.row < destLoc.row)
-        directions[ nbDirections++ ] = 2; // S
-
+        if (abs(destLoc.row - antLoc.row) > abs(antLoc.row + rows - destLoc.row))
+            directions[ nbDirections++ ] = 0; // N
+        else
+            directions[ nbDirections++ ] = 2; // S
+            
     if(antLoc.col > destLoc.col)
-        directions[ nbDirections++ ] = 3; // W
+        //directions[ nbDirections++ ] = 3; // W
+        if (abs(antLoc.col - destLoc.col) > abs(destLoc.col + cols - antLoc.col))
+            directions[ nbDirections++ ] = 1; // E
+        else
+            directions[ nbDirections++ ] = 3; // W
+            
     else if(antLoc.col < destLoc.col)
-        directions[ nbDirections++ ] = 1; // E
+        //directions[ nbDirections++ ] = 1; // E
+        if (abs(destLoc.col - antLoc.col) > abs(antLoc.col + cols - destLoc.col))
+            directions[ nbDirections++ ] = 3; // W
+        else
+            directions[ nbDirections++ ] = 1; // E
     
     return nbDirections;
 };
