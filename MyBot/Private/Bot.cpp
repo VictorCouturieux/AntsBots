@@ -36,6 +36,10 @@ void Bot::makeMoves()
     // Reset the last turn maps
     orders.clear();
     targets.clear();
+
+    // Prevent Stepping on own hill
+    for(const Location hill : state.myHills)
+        orders.insert(pair< Location, Location >(hill, Location()));
     
     // Food gathering
     vector<Route> foodRoutes( nbFood*nbAnts);
@@ -53,6 +57,7 @@ void Bot::makeMoves()
         if(!targets.containsKey(food.End))
             if(!targets.containsValue(food.Start))
                 doMoveLocation(food.Start, food.End);
+    
     /*
     //Default move
     for(int ant=0; ant<(int)state.myAnts.size(); ant++)
@@ -60,6 +65,30 @@ void Bot::makeMoves()
             if(doMoveDirection(state.myAnts[ant], d))
                 break;
     */
+
+    // Moving out from our hills
+    for(const Location hillLoc : state.myHills)
+        // If there is an ant above a hill
+        if(std::find(state.myAnts.begin(), state.myAnts.end(), hillLoc) != state.myAnts.end())
+        {
+            // Check if the ant is already moving (ie if an order is already attributed to the ant on hill)
+            bool alreadyMoving=false;
+            for(const auto& it: orders)
+                if(it.second == hillLoc)
+                {
+                    alreadyMoving = true;
+                    break;
+                }
+
+            // If not, we try to move it anyway
+            if(!alreadyMoving)
+            {
+                for(int d=0; d < TDIRECTIONS; d++)
+                    if(doMoveDirection(hillLoc, d))
+                        break;                
+            }
+        }
+    
     state.bug << "time taken: " << state.timer.getTime() << "ms" << endl << endl;
 };
 

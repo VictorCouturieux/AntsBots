@@ -14,7 +14,7 @@ struct Bot
 {
     State state;
     
-    // Track what moves we have issued
+    // Track what moves we have issued : First -> New Location, Second : Ant Location
     std::map< Location, Location > orders;
     // This map tracks the foods targets and associated ants
     TrackerMap<Location, Location> targets;
