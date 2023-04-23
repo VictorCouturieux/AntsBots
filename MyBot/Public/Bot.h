@@ -5,6 +5,9 @@
 
 #include "State.h"
 #include "Route.h"
+#include "GatheringFood.h"
+#include "DefendHomeland.h"
+#include "Conquest.h"
 #include "TrackerMap.h"
 
 /*
@@ -13,15 +16,18 @@
 struct Bot
 {
     State state;
+    GameState gameState = Food;
     
     // Track what moves we have issued : First -> New Location, Second : Ant Location
-    std::map< Location, Location > orders;
+    std::map<Location, Location> orders;
     // This map tracks the foods targets and associated ants
     TrackerMap<Location, Location> targets;
     // Track all location we have not seen during the game
     std::vector<Location> unseenLocations;
     // Track all enemy hills we have found
     std::vector<Location> enemyHillsFounded;
+
+    std::map<GameState, Behaviour*> Behaviours;
 
     Bot();
 
