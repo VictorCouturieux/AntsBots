@@ -15,7 +15,13 @@ void Bot::playGame()
     cin >> state;
     state.setup();
     endTurn();
-
+    
+    // add all locations to unseen tiles set, run once
+    if (unseenLocations.empty())
+        for (int row = 0; row < state.rows; row ++)
+            for (int col = 0; col < state.cols; col ++)
+                unseenLocations.push_back(Location(row, col));
+    
     //continues making moves while the game is not over
     while(cin >> state)
     {
@@ -30,18 +36,7 @@ void Bot::makeMoves()
 {
     state.bug << "turn " << state.turn << ":" << endl;
     //state.bug << state << endl;
-
-    // add all locations to unseen tiles set, run once
-    if (unseenLocations.empty())
-    {
-        for (int row = 0; row < state.rows; row ++)
-        {
-            for (int col = 0; col < state.cols; col ++)
-            {
-                unseenLocations.push_back(Location(row, col));
-            }
-        }
-    }
+    
     // remove any tiles that can be seen, run each turn
     for (int i = 0; i < unseenLocations.size(); i++)
     {
@@ -62,7 +57,7 @@ void Bot::makeMoves()
     for(const Location hill : state.myHills)
         orders.insert(pair< Location, Location >(hill, Location()));
     
-    // Food gathering
+    /////       ***** Food gathering *****      /////
     vector<Route> foodRoutes( nbFood*nbAnts);
     int ID=0;
     for(Location food : state.food)
@@ -75,9 +70,8 @@ void Bot::makeMoves()
     sort( foodRoutes.begin(), foodRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
 
     for(Route food : foodRoutes)
-        if(!targets.containsKey(food.End))
-            if(!targets.containsValue(food.Start))
-                doMoveLocation(food.Start, food.End);
+        if(!targets.containsKey(food.End) && !targets.containsValue(food.Start))
+            doMoveLocation(food.Start, food.End);
     
     /*
     //Default move
@@ -87,6 +81,7 @@ void Bot::makeMoves()
                 break;
     */
 
+    /////       ***** Attacking ennemies *****      /////
     // add new hills to set
     for (Location enemyHill : state.enemyHills)
         if (std::find(enemyHillsFounded.begin(), enemyHillsFounded.end(), enemyHill) == enemyHillsFounded.end())
@@ -106,9 +101,11 @@ void Bot::makeMoves()
     for (Route route : hillRoutes)
         doMoveLocation(route.Start, route.End);
     
+    /////       ***** Exploration *****      /////
     // explore unseen areas
     for(Location antLoc : state.myAnts)
     {
+        // If the ant doesn't have any route assigned
         if (orders.find(antLoc) == orders.end())
         {
             vector<Route> unseenRoutes;
