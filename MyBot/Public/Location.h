@@ -6,7 +6,9 @@
 */
 struct Location
 {
-    int row, col;
+    int row, col, parentX, parentY;
+    
+    float gCost, hCost, fCost;
 
     Location()
     {
@@ -37,11 +39,12 @@ struct Location
     // To make std::map works
     bool operator<(const Location & other) const
     {
-        if ( row < other.row )
-            return true;
-        else if ( row == other.row )
-            return ( col < other.col );
-        else
-            return false;
+        return fCost < other.fCost;
+        // if ( row < other.row )
+        //     return true;
+        // else if ( row == other.row )
+        //     return ( col < other.col );
+        // else
+        //     return false;
     }
 };

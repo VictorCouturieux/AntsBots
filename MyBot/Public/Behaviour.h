@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "AStarAlgo.h"
 #include "State.h"
 #include "Route.h"
 #include "TrackerMap.h"
@@ -21,6 +22,7 @@ public:
     
 protected :
     Bot* bot;
+    AStarAlgo* aStarPathFinding;
     
     bool doMoveDirection(const Location &antLoc, int dir); // Check if a location based on a direction is available, and make the move if it is
     bool doMoveLocation(const Location &antLoc, const Location &destLoc);

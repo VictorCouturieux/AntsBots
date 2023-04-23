@@ -1,4 +1,6 @@
 #include "../Public/Behaviour.h"
+
+#include "../Public/AStarAlgo.h"
 #include "../Public/Bot.h"
 
 Behaviour::Behaviour(Bot* _bot, GameState _type)
@@ -7,11 +9,14 @@ Behaviour::Behaviour(Bot* _bot, GameState _type)
     type = _type;
     nbFood = _bot->state.food.size();
     nbAnts = _bot->state.myAnts.size();
+    aStarPathFinding = new AStarAlgo(_bot->state);
 }
 
 void Behaviour::makeMoves()
 {
     bot->state.bug << "Test" << endl;
+
+    aStarPathFinding->setupMap();
     
     // Remove any tiles that can be seen
     for (int i = 0; i < bot->unseenLocations.size(); i++)
@@ -47,6 +52,8 @@ bool Behaviour::doMoveDirection(const Location& antLoc, int dir)
 
 bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc)
 {
+    //aStarPathFinding->aStar(antLoc, destLoc);
+    
     // Recover the closest directions to go from antLoc to destLoc
     array< int, 2 > directions;
     const int nbDirections = bot->state.getClosestDirections(antLoc, destLoc, directions);

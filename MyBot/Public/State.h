@@ -11,6 +11,7 @@
 #include <queue>
 #include <stack>
 #include <stdint.h>
+#include <cfloat>
 
 #include "Timer.h"
 #include "Bug.h"
