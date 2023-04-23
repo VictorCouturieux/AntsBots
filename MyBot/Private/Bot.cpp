@@ -71,31 +71,3 @@ void Bot::endTurn()
 
     cout << "go" << endl;
 };
-
-bool Bot::doMoveDirection(const Location &antLoc, int dir)
-{
-    Location newLoc = state.getLocation(antLoc, dir);
-    if (state.isFree(newLoc) && orders.find(newLoc) == orders.end())
-    {
-        state.makeMove(antLoc, dir);
-        orders.insert( pair< Location, Location >(newLoc, antLoc) );
-        return true;
-    }
-    return false;
-}
-
-bool Bot::doMoveLocation(const Location& antLoc, const Location& destLoc)
-{
-    // Recover the closest directions to go from antLoc to destLoc
-    array< int, 2 > directions;
-    const int nbDirections = state.getClosestDirections(antLoc, destLoc, directions);
-
-    for (int i = 0; i < nbDirections; i++)
-        if (doMoveDirection(antLoc, directions[i])) // Check collisions and do the move
-        {
-            targets.insert(destLoc, antLoc);
-            return true;
-        }
-
-    return false;
-}
