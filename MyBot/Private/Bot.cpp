@@ -43,7 +43,7 @@ void Bot::makeMoves()
     Behaviour* CurrentBehaviour = Behaviours.at(gameState);
     const int nbAnts = CurrentBehaviour->nbAnts;
     const int nbFood = CurrentBehaviour->nbFood;
-
+/*
     switch(CurrentBehaviour->type)
     {
         case Food:
@@ -56,7 +56,7 @@ void Bot::makeMoves()
         case Attack:
             if(nbAnts < 30) gameState = Food;
             break;
-    }
+    }*/
     
     CurrentBehaviour->makeMoves();
     state.bug << "time taken: " << state.timer.getTime() << "ms" << endl << endl;

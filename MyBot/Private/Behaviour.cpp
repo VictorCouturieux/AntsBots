@@ -35,7 +35,7 @@ void Behaviour::makeMoves()
     
     // Prevent Stepping on own hill
     for(const Location hill : bot->state.myHills)
-        bot->orders.insert(pair< Location, Location >(hill, Location()));
+        bot->orders.insert(pair< Location, Location >(hill, Location(-1,-1)));
 }
 
 bool Behaviour::doMoveDirection(const Location& antLoc, int dir)
@@ -45,19 +45,24 @@ bool Behaviour::doMoveDirection(const Location& antLoc, int dir)
     {
         bot->state.makeMove(antLoc, dir);
         bot->orders.insert( pair< Location, Location >(newLoc, antLoc) );
+        bot->state.bug << "MOVE " << antLoc.ToString()  << "->" << newLoc.ToString() << endl << endl;
         return true;
     }
+    else
     return false;
 }
 
 bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc)
 {
-    //aStarPathFinding->aStar(antLoc, destLoc);
+    bot->state.bug << "Call A* function" << endl;
+    vector<Location> path = aStarPathFinding->aStar(antLoc, destLoc);
+    bot->state.bug << "... Go to " << path[1].ToString() << endl << endl;
     
     // Recover the closest directions to go from antLoc to destLoc
     array< int, 2 > directions;
-    const int nbDirections = bot->state.getClosestDirections(antLoc, destLoc, directions);
+    const int nbDirections = bot->state.getClosestDirections(antLoc, path[1], directions);
 
+    bot->state.bug << nbDirections << " directions"  << endl;
     for (int i = 0; i < nbDirections; i++)
         if (doMoveDirection(antLoc, directions[i])) // Check collisions and do the move
             {
@@ -70,6 +75,7 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc)
 
 void Behaviour::moveOutFromHills()
 {
+    bot->state.bug << "moveOutFromHills" << endl;
     for(const Location hillLoc : bot->state.myHills)
         // If there is an ant above a hill
         if(std::find(bot->state.myAnts.begin(), bot->state.myAnts.end(), hillLoc) != bot->state.myAnts.end())

@@ -35,11 +35,11 @@ public:
     vector<Location> aStar(Location antLoc, Location dest);
 
 private:
-    vector<vector<Location>> allMap;
+    vector<vector<Node>> baseGrid;
     
-    bool isDestination(int row, int col, Location dest);
-    double calculateH(int row, int col, Location dest);
-    vector<Location> makePath(vector<vector<Location>> map, Location dest);
+    float calculateH(int row, int col, Location dest);
+    void ComputeCost(Node* CurrentNode, Node* NeighbourNode);
+    void UpdateVertex(Node* CurrentNode, Node* NeighbourNode, vector<Node*> &openList);
 };
 
 

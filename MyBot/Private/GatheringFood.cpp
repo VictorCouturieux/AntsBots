@@ -18,6 +18,7 @@ void GatheringFood::makeMoves()
     // Sort the foodRoutes list in a way that we have the shortests distances first
     sort( foodRoutes.begin(), foodRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
 
+    bot->state.bug << "Gather food" << endl;
     for(Route food : foodRoutes)
         if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
             doMoveLocation(food.Start, food.End);
@@ -38,17 +39,28 @@ void GatheringFood::makeMoves()
                 const double distance = bot->state.distance(ant, hillLoc);
                 hillRoutes[ID++] = Route(ant, hillLoc, distance);
             }
+    bot->state.bug << "Attacking ennemies" << endl;
     sort( hillRoutes.begin(), hillRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
     for (Route route : hillRoutes)
         doMoveLocation(route.Start, route.End);
     
+    bot->state.bug << "Exploration" << endl;
     /////       ***** Exploration *****      /////
     // explore unseen areas
     for(Location antLoc : bot->state.myAnts)
     {
+        
         // If the ant doesn't have any route assigned
         if (bot->orders.find(antLoc) == bot->orders.end())
         {
+            bot->state.bug << "Ant at " << antLoc.ToString() << endl;
+            bot->state.bug << "Orders : " << endl;
+            for(auto pair : bot->orders)
+                bot->state.bug << "Ant " << pair.second.ToString() << " -> " << pair.first.ToString() << endl;
+
+            bot->state.bug << antLoc.ToString() << " Not occupied!!" << endl;
+            bot->state.bug << bot->orders.find(antLoc)->first.ToString() << endl;
+            bot->state.bug << bot->orders.end()->first.ToString() << endl;
             vector<Route> unseenRoutes;
             for (Location unseenLoc  : bot->unseenLocations)
             {
@@ -58,7 +70,8 @@ void GatheringFood::makeMoves()
             sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
             for (Route route : unseenRoutes)
                 doMoveLocation(route.Start, route.End);
-        }
+        } else
+            bot->state.bug << "Occupied..." << endl;
     }
 
     // Moving out from our hills
