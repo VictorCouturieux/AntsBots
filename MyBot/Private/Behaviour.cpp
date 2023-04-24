@@ -34,8 +34,8 @@ void Behaviour::makeMoves()
     nbAnts = bot->state.myAnts.size();
     
     // Prevent Stepping on own hill
-    //for(const Location hill : bot->state.myHills)
-    //    bot->orders.insert(pair< Location, Location >(hill, Location()));
+    for(const Location hill : bot->state.myHills)
+        bot->orders.insert(hill, Location());
 }
 
 bool Behaviour::doMoveDirection(const Location& antLoc, int dir)
@@ -59,6 +59,7 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
     {
         bot->state.bug << "Call A* function" << endl;
         vector<Location> path = aStarPathFinding->aStar(antLoc, destLoc);
+        bot->state.bug << "Pathfinding size : " << path.size() << endl;
         bot->state.bug << "... Go to " << path[1].ToString() << endl << endl;
         nextMove = path[1];
     }

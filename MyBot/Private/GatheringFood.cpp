@@ -21,7 +21,7 @@ void GatheringFood::makeMoves()
     bot->state.bug << "Gather food" << endl;
     for(Route food : foodRoutes)
         if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
-            doMoveLocation(food.Start, food.End);
+            doMoveLocation(food.Start, food.End, food.Distance < 20);
 
     /////       ***** Attacking ennemies *****      /////
     // add new hills to set
@@ -30,19 +30,21 @@ void GatheringFood::makeMoves()
             bot->enemyHillsFounded.push_back(enemyHill);
 
     // attack hills
-    vector<Route> hillRoutes( nbAnts*bot->enemyHillsFounded.size());
-    ID=0;
+    vector<Route> hillRoutes;
     for (Location hillLoc : bot->enemyHillsFounded)
         for(Location ant : bot->state.myAnts)
             if (!bot->orders.containsValue(ant))
             {
                 const double distance = bot->state.distance(ant, hillLoc);
-                hillRoutes[ID++] = Route(ant, hillLoc, distance);
+                hillRoutes.emplace_back(ant, hillLoc, distance);
             }
-    bot->state.bug << "Attacking ennemies" << endl;
     sort( hillRoutes.begin(), hillRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
+    
     for (Route route : hillRoutes)
+    {
+        bot->state.bug << "Start hill route : " << route.ToString() << endl;
         doMoveLocation(route.Start, route.End);
+    }
     
     bot->state.bug << "Exploration" << endl;
     /////       ***** Exploration *****      /////

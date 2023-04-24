@@ -24,9 +24,16 @@ void AStarAlgo::ComputeCost(Node* CurrentNode, Node* NeighbourNode)
 {
     int x = abs(CurrentNode->Position.row - NeighbourNode->Position.row),
         y = abs(CurrentNode->Position.col - NeighbourNode->Position.col);
-    //if(x > 1) x -= state.rows;
-    //if(y > 1) y -= state.cols;
+    if(x > 2)
+    {
+        x -= state.rows-2;
+    }
+    if(y > 2) 
+    {
+        y -= state.cols-2;
+    }
     int cost = x + y;
+    state.bug << "cost " << cost << endl;
     if(CurrentNode->gCost + cost < NeighbourNode->gCost)
     {
         // Set Neighbour node's parent as the current one
@@ -110,21 +117,31 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
                 // TODO : Check for borders neighbours
                 int posX = CurrentNode->Position.row + x;
                 int posY = CurrentNode->Position.col + y;
-                if(posX > state.rows) posX = 0;
+                if(posX >= state.rows) posX = 0;
                 else if(posX < 0) posX = state.rows-1;
-                if(posY > state.cols) posY = 0;
+                if(posY >= state.cols) posY = 0;
                 else if(posY < 0) posY = state.cols-1;
                 
-                
                 Node* NeighbourNode = &grid[posX][posY];
-                // If the neighbour is not already analysed (not in closed or open lists)
-                if(find(closedList.begin(), closedList.end(), NeighbourNode) == closedList.end()
-                    && find(openList.begin(), openList.end(), NeighbourNode) == openList.end())
+                if(!NeighbourNode)
+                    state.bug << "Node inexistant" << endl;
+                if(state.isFree(NeighbourNode->Position))
                 {
-                    UpdateVertex(CurrentNode, NeighbourNode, openList);
+                    state.bug << "Node free : " << NeighbourNode->Position.ToString() << endl;
+                    // If the neighbour is not already analysed (not in closed or open lists)
+                    if(find(closedList.begin(), closedList.end(), NeighbourNode) == closedList.end()
+                        && find(openList.begin(), openList.end(), NeighbourNode) == openList.end())
+                    {
+                        UpdateVertex(CurrentNode, NeighbourNode, openList);
+                    }
+                } else
+                {
+                    state.bug << "Node unreachable" << endl;
+                    closedList.push_back(NeighbourNode);
                 }
             }
     }
 
+    state.bug << "Pathfinding ended" << endl;
     return path;
 }

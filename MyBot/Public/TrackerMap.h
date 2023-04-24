@@ -36,6 +36,9 @@ public:
     {
         map.insert({key, value});
     }
+
+    std::map< TKey, TValue > GetMap() { return map; }
+
 private:
     std::map< TKey, TValue > map;
 };
