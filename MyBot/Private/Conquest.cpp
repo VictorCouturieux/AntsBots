@@ -18,7 +18,7 @@ void Conquest::makeMoves()
     int ID=0;
     for (Location hillLoc : bot->enemyHillsFounded)
         for(Location ant : bot->state.myAnts)
-            if (bot->orders.find(ant) == bot->orders.end())
+            if (!bot->orders.containsValue(ant))
             {
                 const double distance = bot->state.distance(ant, hillLoc);
                 hillRoutes[ID++] = Route(ant, hillLoc, distance);
@@ -50,7 +50,7 @@ void Conquest::makeMoves()
     for(Location antLoc : bot->state.myAnts)
     {
         // If the ant doesn't have any route assigned
-        if (bot->orders.find(antLoc) == bot->orders.end())
+        if (!bot->orders.containsValue(antLoc))
         {
             vector<Route> unseenRoutes;
             for (Location unseenLoc  : bot->unseenLocations)

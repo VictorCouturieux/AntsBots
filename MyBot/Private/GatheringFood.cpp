@@ -34,7 +34,7 @@ void GatheringFood::makeMoves()
     ID=0;
     for (Location hillLoc : bot->enemyHillsFounded)
         for(Location ant : bot->state.myAnts)
-            if (bot->orders.find(ant) == bot->orders.end())
+            if (!bot->orders.containsValue(ant))
             {
                 const double distance = bot->state.distance(ant, hillLoc);
                 hillRoutes[ID++] = Route(ant, hillLoc, distance);
@@ -49,27 +49,28 @@ void GatheringFood::makeMoves()
     // explore unseen areas
     for(Location antLoc : bot->state.myAnts)
     {
-        
+        bot->state.bug << "Ant at " << antLoc.ToString() << endl;
+       // bot->state.bug << "Orders : " << endl;
+        //for(auto pair : bot->orders)
+        //    bot->state.bug << "Ant " << pair.second.ToString() << " -> " << pair.first.ToString() << endl;
         // If the ant doesn't have any route assigned
-        if (bot->orders.find(antLoc) == bot->orders.end())
+        if (!bot->orders.containsValue(antLoc))
         {
-            bot->state.bug << "Ant at " << antLoc.ToString() << endl;
-            bot->state.bug << "Orders : " << endl;
-            for(auto pair : bot->orders)
-                bot->state.bug << "Ant " << pair.second.ToString() << " -> " << pair.first.ToString() << endl;
-
             bot->state.bug << antLoc.ToString() << " Not occupied!!" << endl;
-            bot->state.bug << bot->orders.find(antLoc)->first.ToString() << endl;
-            bot->state.bug << bot->orders.end()->first.ToString() << endl;
             vector<Route> unseenRoutes;
             for (Location unseenLoc  : bot->unseenLocations)
             {
                 const double distance = bot->state.distance(antLoc, unseenLoc);
                 unseenRoutes.push_back(Route(antLoc, unseenLoc, distance));
             }
+            
             sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
+            bot->state.bug << antLoc.ToString() << "Unseen : " << endl;
+            for(auto r : unseenRoutes)
+                bot->state.bug << "Ant " << r.ToString() << " -> " << r.ToString() << endl;
             for (Route route : unseenRoutes)
-                doMoveLocation(route.Start, route.End);
+                if(doMoveLocation(route.Start, route.End, unseenRoutes.size() < 10))
+                    break;
         } else
             bot->state.bug << "Occupied..." << endl;
     }

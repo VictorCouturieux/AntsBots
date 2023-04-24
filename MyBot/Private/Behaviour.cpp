@@ -34,17 +34,17 @@ void Behaviour::makeMoves()
     nbAnts = bot->state.myAnts.size();
     
     // Prevent Stepping on own hill
-    for(const Location hill : bot->state.myHills)
-        bot->orders.insert(pair< Location, Location >(hill, Location(-1,-1)));
+    //for(const Location hill : bot->state.myHills)
+    //    bot->orders.insert(pair< Location, Location >(hill, Location()));
 }
 
 bool Behaviour::doMoveDirection(const Location& antLoc, int dir)
 {
     Location newLoc = bot->state.getLocation(antLoc, dir);
-    if (bot->state.isFree(newLoc) && bot->orders.find(newLoc) == bot->orders.end())
+    if (bot->state.isFree(newLoc) && !bot->orders.containsKey(newLoc))
     {
         bot->state.makeMove(antLoc, dir);
-        bot->orders.insert( pair< Location, Location >(newLoc, antLoc) );
+        bot->orders.insert(newLoc, antLoc);
         bot->state.bug << "MOVE " << antLoc.ToString()  << "->" << newLoc.ToString() << endl << endl;
         return true;
     }
@@ -52,15 +52,22 @@ bool Behaviour::doMoveDirection(const Location& antLoc, int dir)
     return false;
 }
 
-bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc)
+bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, bool pathFinding)
 {
-    bot->state.bug << "Call A* function" << endl;
-    vector<Location> path = aStarPathFinding->aStar(antLoc, destLoc);
-    bot->state.bug << "... Go to " << path[1].ToString() << endl << endl;
+    Location nextMove;
+    if(pathFinding)
+    {
+        bot->state.bug << "Call A* function" << endl;
+        vector<Location> path = aStarPathFinding->aStar(antLoc, destLoc);
+        bot->state.bug << "... Go to " << path[1].ToString() << endl << endl;
+        nextMove = path[1];
+    }
+    else
+        nextMove = destLoc;
     
     // Recover the closest directions to go from antLoc to destLoc
     array< int, 2 > directions;
-    const int nbDirections = bot->state.getClosestDirections(antLoc, path[1], directions);
+    const int nbDirections = bot->state.getClosestDirections(antLoc, nextMove, directions);
 
     bot->state.bug << nbDirections << " directions"  << endl;
     for (int i = 0; i < nbDirections; i++)
@@ -82,12 +89,8 @@ void Behaviour::moveOutFromHills()
         {
             // Check if the ant is already moving (ie if an order is already attributed to the ant on hill)
             bool alreadyMoving=false;
-            for(const auto& it: bot->orders)
-                if(it.second == hillLoc)
-                {
-                    alreadyMoving = true;
-                    break;
-                }
+            if(bot->orders.containsValue(hillLoc))
+                alreadyMoving = true;
 
             // If not, we try to move it anyway
             if(!alreadyMoving)

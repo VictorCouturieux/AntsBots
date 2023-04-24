@@ -4,8 +4,11 @@
 #include <algorithm>
 
 float AStarAlgo::calculateH(int row, int col, Location dest) {
-    return sqrt((row - dest.row)*(row - dest.row)
-            + (col - dest.col)*(col - dest.col));
+    int d1 = abs(row - dest.row),
+        d2 = abs(col - dest.col),
+        dr = min(d1, state.rows-d1),
+        dc = min(d2, state.cols-d2);
+    return sqrt(dr*dr + dc*dc);
 }
 
 void AStarAlgo::setupMap()
@@ -19,8 +22,11 @@ void AStarAlgo::setupMap()
 
 void AStarAlgo::ComputeCost(Node* CurrentNode, Node* NeighbourNode)
 {
-    int cost = abs(CurrentNode->Position.col - NeighbourNode->Position.col)
-            + abs(CurrentNode->Position.row - NeighbourNode->Position.row);
+    int x = abs(CurrentNode->Position.row - NeighbourNode->Position.row),
+        y = abs(CurrentNode->Position.col - NeighbourNode->Position.col);
+    //if(x > 1) x -= state.rows;
+    //if(y > 1) y -= state.cols;
+    int cost = x + y;
     if(CurrentNode->gCost + cost < NeighbourNode->gCost)
     {
         // Set Neighbour node's parent as the current one
@@ -87,7 +93,7 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
             while(CurrentNode->Position != antLoc)
             {
                 CurrentNode = CurrentNode->Parent;
-                path.push_back(CurrentNode->Position);
+                path.push_back(Location(CurrentNode->Position));
             }
             std::reverse(path.begin(),path.end());
             for(Location loc : path)
@@ -101,7 +107,16 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
         for(int x=-1; x <= 1; x++)
             for(int y=-1; y <= 1; y++)
             {
-                Node* NeighbourNode = &grid[CurrentNode->Position.row + x][CurrentNode->Position.col + y];
+                // TODO : Check for borders neighbours
+                int posX = CurrentNode->Position.row + x;
+                int posY = CurrentNode->Position.col + y;
+                if(posX > state.rows) posX = 0;
+                else if(posX < 0) posX = state.rows-1;
+                if(posY > state.cols) posY = 0;
+                else if(posY < 0) posY = state.cols-1;
+                
+                
+                Node* NeighbourNode = &grid[posX][posY];
                 // If the neighbour is not already analysed (not in closed or open lists)
                 if(find(closedList.begin(), closedList.end(), NeighbourNode) == closedList.end()
                     && find(openList.begin(), openList.end(), NeighbourNode) == openList.end())

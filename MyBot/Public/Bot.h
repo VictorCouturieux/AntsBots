@@ -19,7 +19,7 @@ struct Bot
     GameState gameState = Food;
     
     // Track what moves we have issued : First -> New Location, Second : Ant Location
-    std::map<Location, Location> orders;
+    TrackerMap<Location, Location> orders;
     // This map tracks the foods targets and associated ants
     TrackerMap<Location, Location> targets;
     // Track all location we have not seen during the game

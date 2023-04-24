@@ -27,7 +27,7 @@ void DefendHomeland::makeMoves()
     for(Location antLoc : bot->state.myAnts)
     {
         // If the ant doesn't have any route assigned
-        if (bot->orders.find(antLoc) == bot->orders.end())
+        if (!bot->orders.containsValue(antLoc))
         {
             vector<Route> unseenRoutes;
             for (Location unseenLoc  : bot->unseenLocations)
