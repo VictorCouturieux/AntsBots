@@ -35,10 +35,25 @@ void Bot::playGame()
     }
 };
 
+void Bot::checkAntPath()
+{
+    for (const auto& kv : pathOrders.GetRefMap())
+        if (!state.grid[kv.first.row][kv.first.col].ant)
+            pathOrders.GetRefMap().erase(pathOrders.GetRefMap().find(kv.first));
+}
+
 //makes the bots moves for the turn
 void Bot::makeMoves()
 {
+    state.bug << "" << endl;
     state.bug << "turn " << state.turn << ":" << endl;
+    state.bug << "nb ant : " << state.myAnts.size() << endl;
+    
+    for (auto ant : state.myAnts)
+    {
+        state.bug << "[" << ant.row << ":" << ant.col << "] ";
+    }
+    state.bug << "" << endl;
 
     Behaviour* CurrentBehaviour = Behaviours.at(gameState);
     const int nbAnts = CurrentBehaviour->nbAnts;
@@ -59,6 +74,16 @@ void Bot::makeMoves()
     }*/
     
     CurrentBehaviour->makeMoves();
+    
+    state.bug << "nb pathOrders : " << pathOrders.GetMap().size() << endl;
+    for (const auto& kv : pathOrders.GetMap()) {
+        state.bug << "antPath => (" << kv.first.row << ":" << kv.first.col << ") values => ";
+        for (Location value : kv.second)
+            state.bug << value.row << ":" << value.col << " ";
+        state.bug << endl;
+    }
+    if (state.myAnts.size() < pathOrders.GetMap().size())
+        state.bug << "pathOrders OVER" << endl;
     state.bug << "time taken: " << state.timer.getTime() << "ms" << endl << endl;
 };
 

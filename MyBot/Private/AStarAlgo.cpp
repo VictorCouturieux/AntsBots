@@ -11,6 +11,12 @@ float AStarAlgo::calculateH(int row, int col, Location dest) {
     return sqrt(dr*dr + dc*dc);
 }
 
+float AStarAlgo::calculateManhattanH(int row, int col, Location dest)
+{
+    float d = abs(row - dest.row) + abs(col - dest.col);
+    return d;
+}
+
 void AStarAlgo::setupMap()
 {
     //Initialize whole map
@@ -33,7 +39,7 @@ void AStarAlgo::ComputeCost(Node* CurrentNode, Node* NeighbourNode)
         y -= state.cols-2;
     }
     int cost = x + y;
-    state.bug << "cost " << cost << endl;
+    //state.bug << "cost " << cost << endl;
     if(CurrentNode->gCost + cost < NeighbourNode->gCost)
     {
         // Set Neighbour node's parent as the current one
@@ -41,14 +47,14 @@ void AStarAlgo::ComputeCost(Node* CurrentNode, Node* NeighbourNode)
         // Update Neighbour node's cost
         NeighbourNode->gCost = CurrentNode->gCost + cost;
         NeighbourNode->fCost = NeighbourNode->gCost + NeighbourNode->hCost;
-        state.bug << " - " << NeighbourNode->ToString() << endl;
+        //state.bug << " - " << NeighbourNode->ToString() << endl;
     }
 }
 
 void AStarAlgo::UpdateVertex(Node* CurrentNode, Node* NeighbourNode, vector<Node*> &openList)
 {
     float oldCost = NeighbourNode->gCost;
-    state.bug << "->" << NeighbourNode->Position.ToString();
+    //state.bug << "->" << NeighbourNode->Position.ToString();
     ComputeCost(CurrentNode, NeighbourNode);
     if(NeighbourNode->gCost < oldCost)
     {
@@ -69,7 +75,7 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
     // Calculate h(x) with destLoc
     for (int x = 0; x < state.rows; x++) 
         for (int y = 0; y < state.cols; y++) 
-            grid[x][y].hCost = calculateH(x,y, destLoc);
+            grid[x][y].hCost = calculateManhattanH(x,y, destLoc);
     
     // Init both open (nodes to be considered) and closed (nodes to ignore) lists
     vector<Node*> closedList;
@@ -80,32 +86,54 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
     grid[antLoc.row][antLoc.col].fCost = grid[antLoc.row][antLoc.col].hCost;
     grid[antLoc.row][antLoc.col].Parent = &grid[antLoc.row][antLoc.col];
 
-    state.bug << "From " << antLoc.ToString() << " To " << destLoc.ToString() << endl;
+    //state.bug << "From " << antLoc.ToString() << " To " << destLoc.ToString() << endl;
     openList.push_back(&grid[antLoc.row][antLoc.col]);
+    //int index = 0;
     while(!openList.empty())
     {
+        //state.bug << index << endl;
+        //index++;
+        
         // Sort the array in a way to have the lowest fCost in last position
         sort( openList.begin(), openList.end(), [](Node* a, Node* b) { return a->fCost > b->fCost; } );
         // Pop the last Node in openList
         Node* CurrentNode = openList.back();
         openList.pop_back();
 
-        state.bug << CurrentNode->Position.ToString() << "<-" << CurrentNode->Parent->Position.ToString() << endl;
+        //state.bug << CurrentNode->Position.ToString() << "<-" << CurrentNode->Parent->Position.ToString() << endl;
         // If we found the destination
         if(CurrentNode->Position == destLoc)
         {
-            state.bug << "Found path!" << endl;
+            //state.bug << "Found path!" << endl;
             // Build the path by seeking for startLocation from parents
             path.push_back(CurrentNode->Position);
             while(CurrentNode->Position != antLoc)
             {
                 CurrentNode = CurrentNode->Parent;
-                path.push_back(Location(CurrentNode->Position));
+
+                Location newLoc = Location(CurrentNode->Position);
+                array< int, 2 > directions;
+                if (!path.empty() && state.getClosestDirections(path[path.size()-1], newLoc, directions) == 2)
+                {
+                    if (state.isFree(state.getLocation(antLoc, directions[0])))
+                    {
+                        path.push_back(state.getLocation(path[path.size()-1], directions[0]));
+                        path.push_back(state.getLocation(path[path.size()-1], directions[1]));
+                    } else
+                    {
+                        path.push_back(state.getLocation(path[path.size()-1], directions[1]));
+                        path.push_back(state.getLocation(path[path.size()-1], directions[0]));
+                    }
+                }
+                else
+                {
+                    path.push_back(newLoc);
+                }
             }
             std::reverse(path.begin(),path.end());
-            for(Location loc : path)
-                state.bug << loc.ToString() << "->";
-            state.bug << endl;
+            //for(Location loc : path)
+                //state.bug << loc.ToString() << "->";
+            //state.bug << endl;
             break;
         }
 
@@ -123,25 +151,32 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
                 else if(posY < 0) posY = state.cols-1;
                 
                 Node* NeighbourNode = &grid[posX][posY];
-                if(!NeighbourNode)
-                    state.bug << "Node inexistant" << endl;
-                if(state.isFree(NeighbourNode->Position))
+                // if(!NeighbourNode)
+                //     state.bug << "Node inexistant" << endl;
+                // TODO : vérifier si abs(x) + abs(y) == 2 : donc si diag, puis vérifier position libre en manhattan
+                
+                if (abs(x) + abs(y) == 2 && !state.isFree(Location(posX, CurrentNode->Position.col)) + !state.isFree(Location(CurrentNode->Position.row, posY)) == 2)
                 {
-                    state.bug << "Node free : " << NeighbourNode->Position.ToString() << endl;
+                    //state.bug << "Node unreachable" << endl;
+                    closedList.push_back(NeighbourNode);
+                }else if(state.isFree(NeighbourNode->Position))
+                {
+                    //state.bug << "Node free : " << NeighbourNode->Position.ToString() << endl;
                     // If the neighbour is not already analysed (not in closed or open lists)
                     if(find(closedList.begin(), closedList.end(), NeighbourNode) == closedList.end()
                         && find(openList.begin(), openList.end(), NeighbourNode) == openList.end())
                     {
                         UpdateVertex(CurrentNode, NeighbourNode, openList);
                     }
-                } else
+                }
+                else
                 {
-                    state.bug << "Node unreachable" << endl;
+                    //state.bug << "Node unreachable" << endl;
                     closedList.push_back(NeighbourNode);
                 }
             }
     }
 
-    state.bug << "Pathfinding ended" << endl;
+    //state.bug << "Pathfinding ended" << endl;
     return path;
 }

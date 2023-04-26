@@ -36,9 +36,28 @@ public:
     {
         map.insert({key, value});
     }
+    void updateKey(TKey oldKey, TKey newKey)
+    {
+        auto it = map.find(oldKey);
+        if (it != map.end()) {
+            // Swap value from oldKey to newKey, note that a default constructed value 
+            // is created by operator[] if 'm' does not contain newKey.
+            std::swap(map[newKey], it->second);
+            // Erase old key-value from map
+            map.erase(it);
+        }
+    }
 
     std::map< TKey, TValue > GetMap() { return map; }
+    std::map< TKey, TValue >& GetRefMap() { return map; }
 
+    template<typename T>
+    void pop_front(std::vector<T>& vec)
+    {
+        vec.front() = std::move(vec.back());
+        vec.pop_back();
+    }
+    
 private:
     std::map< TKey, TValue > map;
 };

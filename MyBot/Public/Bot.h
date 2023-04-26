@@ -20,6 +20,10 @@ struct Bot
     
     // Track what moves we have issued : First -> New Location, Second : Ant Location
     TrackerMap<Location, Location> orders;
+
+    // Order list by ants calculate by A* algo : optimise A* aglo utility 
+    TrackerMap<Location, std::vector<Location>> pathOrders;
+    
     // This map tracks the foods targets and associated ants
     TrackerMap<Location, Location> targets;
     // Track all location we have not seen during the game
@@ -32,6 +36,7 @@ struct Bot
     Bot();
 
     void playGame();    //plays a single game of Ants
+    void checkAntPath();
 
     void makeMoves();   //makes moves for a single turn
     void endTurn();     //indicates to the engine that it has made its moves    

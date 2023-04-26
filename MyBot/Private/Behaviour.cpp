@@ -1,5 +1,7 @@
 #include "../Public/Behaviour.h"
 
+#include <sstream>
+
 #include "../Public/AStarAlgo.h"
 #include "../Public/Bot.h"
 
@@ -14,7 +16,7 @@ Behaviour::Behaviour(Bot* _bot, GameState _type)
 
 void Behaviour::makeMoves()
 {
-    bot->state.bug << "Test" << endl;
+    //bot->state.bug << "Test" << endl;
 
     aStarPathFinding->setupMap();
     
@@ -45,7 +47,7 @@ bool Behaviour::doMoveDirection(const Location& antLoc, int dir)
     {
         bot->state.makeMove(antLoc, dir);
         bot->orders.insert(newLoc, antLoc);
-        bot->state.bug << "MOVE " << antLoc.ToString()  << "->" << newLoc.ToString() << endl << endl;
+        //bot->state.bug << "MOVE " << antLoc.ToString()  << "->" << newLoc.ToString() << endl << endl;
         return true;
     }
     else
@@ -54,36 +56,70 @@ bool Behaviour::doMoveDirection(const Location& antLoc, int dir)
 
 bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, bool pathFinding)
 {
-    Location nextMove;
-    if(pathFinding)
+    //if (bot->state.grid[antLoc.row][antLoc.col].ant)
+    if (find(bot->state.myAnts.begin(), bot->state.myAnts.end(), antLoc) != bot->state.myAnts.end())
     {
-        bot->state.bug << "Call A* function" << endl;
-        vector<Location> path = aStarPathFinding->aStar(antLoc, destLoc);
-        bot->state.bug << "Pathfinding size : " << path.size() << endl;
-        bot->state.bug << "... Go to " << path[1].ToString() << endl << endl;
-        nextMove = path[1];
-    }
-    else
-        nextMove = destLoc;
-    
-    // Recover the closest directions to go from antLoc to destLoc
-    array< int, 2 > directions;
-    const int nbDirections = bot->state.getClosestDirections(antLoc, nextMove, directions);
-
-    bot->state.bug << nbDirections << " directions"  << endl;
-    for (int i = 0; i < nbDirections; i++)
-        if (doMoveDirection(antLoc, directions[i])) // Check collisions and do the move
+        Location nextMove;
+        if(pathFinding)
+        {
+            // init default empty value
+            vector<Location> antPath;
+            //get path if exist
+            if (bot->pathOrders.containsKey(antLoc))
+                antPath = bot->pathOrders.GetMap().at(antLoc);
+            
+            if(antPath.empty() || antPath.back() != destLoc)
             {
-            bot->targets.insert(destLoc, antLoc);
-            return true;
+                auto it =  bot->pathOrders.GetRefMap().find(antLoc);
+                if (it != bot->pathOrders.GetRefMap().end())
+                    //remove potential existing path
+                    bot->pathOrders.GetRefMap().erase(it);
+                
+                //Call A* function
+                antPath = aStarPathFinding->aStar(antLoc, destLoc);
+                //remove first step because it equals to Key
+                antPath.erase(antPath.begin());
+                //insert the new value
+                bot->pathOrders.insert(antLoc, antPath);
             }
+            if (bot->state.isFree(antPath[0]))
+            {
+                //setup next step
+                nextMove = Location(antPath[0].row, antPath[0].col);
+                //set new location to Key.
+                bot->pathOrders.updateKey(antLoc, nextMove);
+                //remove the next step of path
+                bot->pathOrders.GetRefMap()[nextMove].erase(bot->pathOrders.GetRefMap()[nextMove].begin());
 
+                // check if path affected to a ant by position
+                bot->checkAntPath();
+            }
+            else
+            {
+                nextMove = antLoc;
+            }
+        }
+        else
+            nextMove = destLoc;
+        
+        // Recover the closest directions to go from antLoc to destLoc
+        array< int, 2 > directions;
+        const int nbDirections = bot->state.getClosestDirections(antLoc, nextMove, directions);
+
+        //bot->state.bug << nbDirections << " directions"  << endl;
+        for (int i = 0; i < nbDirections; i++)
+            if (doMoveDirection(antLoc, directions[i])) // Check collisions and do the move
+            {
+                bot->targets.insert(destLoc, antLoc);
+                return true;
+            }
+    }
     return false;
 }
 
 void Behaviour::moveOutFromHills()
 {
-    bot->state.bug << "moveOutFromHills" << endl;
+    //bot->state.bug << "moveOutFromHills" << endl;
     for(const Location hillLoc : bot->state.myHills)
         // If there is an ant above a hill
         if(std::find(bot->state.myAnts.begin(), bot->state.myAnts.end(), hillLoc) != bot->state.myAnts.end())

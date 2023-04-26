@@ -4,7 +4,7 @@
 void Conquest::makeMoves()
 {
     Behaviour::makeMoves();
-    bot->state.bug << "Conquest" << endl;
+    //bot->state.bug << "Conquest" << endl;
 
     
     /////       ***** Attacking ennemies *****      /////

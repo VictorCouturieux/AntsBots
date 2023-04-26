@@ -4,7 +4,7 @@
 void GatheringFood::makeMoves()
 {
     Behaviour::makeMoves();
-    bot->state.bug << "Gather" << endl;
+    //bot->state.bug << "Gather" << endl;
     
     /////       ***** Food gathering *****      /////
     vector<Route> foodRoutes( nbFood*nbAnts);
@@ -18,10 +18,13 @@ void GatheringFood::makeMoves()
     // Sort the foodRoutes list in a way that we have the shortests distances first
     sort( foodRoutes.begin(), foodRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
 
-    bot->state.bug << "Gather food" << endl;
+    //bot->state.bug << "Gather food" << endl;
     for(Route food : foodRoutes)
         if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
+        {
             doMoveLocation(food.Start, food.End, food.Distance < 20);
+            bot->state.bug << "food to far" << endl;
+        }
 
     /////       ***** Attacking ennemies *****      /////
     // add new hills to set
@@ -42,23 +45,23 @@ void GatheringFood::makeMoves()
     
     for (Route route : hillRoutes)
     {
-        bot->state.bug << "Start hill route : " << route.ToString() << endl;
+        //bot->state.bug << "Start hill route : " << route.ToString() << endl;
         doMoveLocation(route.Start, route.End);
     }
     
-    bot->state.bug << "Exploration" << endl;
+    //bot->state.bug << "Exploration" << endl;
     /////       ***** Exploration *****      /////
     // explore unseen areas
     for(Location antLoc : bot->state.myAnts)
     {
-        bot->state.bug << "Ant at " << antLoc.ToString() << endl;
-       // bot->state.bug << "Orders : " << endl;
+        //bot->state.bug << "Ant at " << antLoc.ToString() << endl;
+        //bot->state.bug << "Orders : " << endl;
         //for(auto pair : bot->orders)
         //    bot->state.bug << "Ant " << pair.second.ToString() << " -> " << pair.first.ToString() << endl;
         // If the ant doesn't have any route assigned
         if (!bot->orders.containsValue(antLoc))
         {
-            bot->state.bug << antLoc.ToString() << " Not occupied!!" << endl;
+            //bot->state.bug << antLoc.ToString() << " Not occupied!!" << endl;
             vector<Route> unseenRoutes;
             for (Location unseenLoc  : bot->unseenLocations)
             {
@@ -67,14 +70,18 @@ void GatheringFood::makeMoves()
             }
             
             sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
-            bot->state.bug << antLoc.ToString() << "Unseen : " << endl;
-            for(auto r : unseenRoutes)
-                bot->state.bug << "Ant " << r.ToString() << " -> " << r.ToString() << endl;
+            //bot->state.bug << antLoc.ToString() << "Unseen : " << endl;
+            //for(auto r : unseenRoutes)
+                //bot->state.bug << "Ant " << r.ToString() << " -> " << r.ToString() << endl;
             for (Route route : unseenRoutes)
                 if(doMoveLocation(route.Start, route.End, unseenRoutes.size() < 10))
+                {
+                    bot->state.bug << "ant search road" << endl;
                     break;
-        } else
-            bot->state.bug << "Occupied..." << endl;
+                }
+        }
+        // else
+        //     bot->state.bug << "Occupied..." << endl;
     }
 
     // Moving out from our hills
