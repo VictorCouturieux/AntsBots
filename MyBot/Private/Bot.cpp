@@ -37,9 +37,17 @@ void Bot::playGame()
 
 void Bot::checkAntPath()
 {
-    for (const auto& kv : pathOrders.GetRefMap())
-        if (!state.grid[kv.first.row][kv.first.col].ant)
-            pathOrders.GetRefMap().erase(pathOrders.GetRefMap().find(kv.first));
+    for (const auto& po : pathOrders.GetMap())
+    {
+
+        if (find(state.myAnts.begin(), state.myAnts.end(), po.first) == state.myAnts.end())
+        {
+            //state.bug << "erase" << endl;
+            const auto it = pathOrders.GetRefMap().find(po.first);
+            //state.bug << "it" << endl;
+            pathOrders.GetRefMap().erase(pathOrders.GetRefMap().find(po.first));
+        }
+    }
 }
 
 //makes the bots moves for the turn

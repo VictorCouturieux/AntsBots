@@ -20,6 +20,7 @@ void DefendHomeland::makeMoves()
     for(Route food : foodRoutes)
         if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
             doMoveLocation(food.Start, food.End);
+    //bot->state.bug << "ant DefHomeLand" << endl;
 
     
     /////       ***** Exploration *****      /////
@@ -38,6 +39,7 @@ void DefendHomeland::makeMoves()
             sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
             for (Route route : unseenRoutes)
                 doMoveLocation(route.Start, route.End);
+            //bot->state.bug << "ant DefHomeLand" << endl;
         }
     }
 

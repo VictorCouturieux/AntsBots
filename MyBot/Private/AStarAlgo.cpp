@@ -66,7 +66,10 @@ void AStarAlgo::UpdateVertex(Node* CurrentNode, Node* NeighbourNode, vector<Node
 }
 
 vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
-
+    state.bug << "====Pathfinding started====" << endl;
+    state.bug << "time taken: " << state.timer.getTime() << "ms" << endl;
+    
+    state.bug << "ant loc = [" << antLoc.row << ":" << antLoc.col << "] // dest loc = [" << destLoc.row << ":" << destLoc.col << "]" << endl;
     vector<Location> path;
     // Réduire taille map : carré antLoc->dest
 
@@ -88,11 +91,10 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
 
     //state.bug << "From " << antLoc.ToString() << " To " << destLoc.ToString() << endl;
     openList.push_back(&grid[antLoc.row][antLoc.col]);
-    //int index = 0;
+    int index = 0;
     while(!openList.empty())
     {
-        //state.bug << index << endl;
-        //index++;
+        index++;
         
         // Sort the array in a way to have the lowest fCost in last position
         sort( openList.begin(), openList.end(), [](Node* a, Node* b) { return a->fCost > b->fCost; } );
@@ -176,7 +178,10 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
                 }
             }
     }
-
-    //state.bug << "Pathfinding ended" << endl;
+    state.bug << "nb turns of search : " << index << endl;
+    state.bug << "openList size = " << openList.size() << " // closedList size = " << closedList.size() << endl;
+    state.bug << "MyAnts size = " << state.myAnts.size() << endl;
+    state.bug << "antPath size = " << path.size() << endl;
+    state.bug << "----Pathfinding ended----" << endl;
     return path;
 }

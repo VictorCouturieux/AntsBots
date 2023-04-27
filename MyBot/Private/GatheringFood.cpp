@@ -21,10 +21,11 @@ void GatheringFood::makeMoves()
     //bot->state.bug << "Gather food" << endl;
     for(Route food : foodRoutes)
         if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
-        {
-            doMoveLocation(food.Start, food.End, food.Distance < 20);
-            bot->state.bug << "food to far" << endl;
-        }
+            if (!doMoveLocation(food.Start, food.End, food.Distance < 20))
+            {
+                //bot->state.bug << "food to far" << endl;
+            }
+    //bot->state.bug << "ant found food" << endl;
 
     /////       ***** Attacking ennemies *****      /////
     // add new hills to set
@@ -46,7 +47,8 @@ void GatheringFood::makeMoves()
     for (Route route : hillRoutes)
     {
         //bot->state.bug << "Start hill route : " << route.ToString() << endl;
-        doMoveLocation(route.Start, route.End);
+        doMoveLocation(route.Start, route.End, route.Distance <= bot->state.viewradius * 2.5);
+        //bot->state.bug << "food : ant found road to hill" << endl;
     }
     
     //bot->state.bug << "Exploration" << endl;
@@ -74,11 +76,14 @@ void GatheringFood::makeMoves()
             //for(auto r : unseenRoutes)
                 //bot->state.bug << "Ant " << r.ToString() << " -> " << r.ToString() << endl;
             for (Route route : unseenRoutes)
-                if(doMoveLocation(route.Start, route.End, unseenRoutes.size() < 10))
+            {
+                if(doMoveLocation(route.Start, route.End, unseenRoutes.size() < 10 && route.Distance <= bot->state.viewradius))
                 {
-                    bot->state.bug << "ant search road" << endl;
+                    //bot->state.bug << "ant found food" << endl;
                     break;
                 }
+            }
+                
         }
         // else
         //     bot->state.bug << "Occupied..." << endl;

@@ -72,6 +72,36 @@ Location State::getLocation(const Location &loc, int direction)
     A CORRECT MORE EFFICIENT IMPLEMENTATION, TAKE A LOOK AT THE GET_VISION FUNCTION
     IN ANTS.PY ON THE CONTESTS GITHUB PAGE.
 */
+
+bool State::directAccessTarget(const Location &loc1, const Location &loc2)
+{
+    Location processLoc = loc1;
+    array< int, 2 > directions;
+    while (processLoc != loc2)
+    {
+        int nbDir = getClosestDirections(processLoc, loc2, directions);
+        Location searchLoc;
+        for (int i = 0; i < nbDir; ++i)
+        {
+            searchLoc = getLocation(processLoc, directions[i]);
+            if (grid[searchLoc.row][searchLoc.col].isWater)
+            {
+                if (nbDir == 2 && i == 0)
+                {
+                    searchLoc = getLocation(processLoc, directions[abs(i - 1)]);
+                    if (nbDir == 2 && grid[searchLoc.row][searchLoc.col].isWater) return false;
+                    searchLoc = getLocation(processLoc, directions[i]);
+                    if (nbDir == 2 && grid[searchLoc.row][searchLoc.col].isWater) return false;
+                }
+                else
+                    return false;
+            }
+            processLoc = searchLoc;
+        }
+    }
+    return true;
+}
+
 void State::updateVisionInformation()
 {
     std::queue<Location> locQueue;

@@ -26,7 +26,7 @@ void Conquest::makeMoves()
     sort( hillRoutes.begin(), hillRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
     for (Route route : hillRoutes)
         doMoveLocation(route.Start, route.End);
-
+    //bot->state.bug << "ant found road to hill" << endl;
     
     /////       ***** Food gathering *****      /////
     vector<Route> foodRoutes( nbFood*nbAnts);
@@ -42,7 +42,10 @@ void Conquest::makeMoves()
 
     for(Route food : foodRoutes)
         if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
+        {
             doMoveLocation(food.Start, food.End);
+            //bot->state.bug << "ant found road to hill" << endl;
+        }
 
     
     /////       ***** Exploration *****      /////
@@ -61,6 +64,7 @@ void Conquest::makeMoves()
             sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
             for (Route route : unseenRoutes)
                 doMoveLocation(route.Start, route.End);
+            //bot->state.bug << "ant found road to hill" << endl;
         }
     }
 
