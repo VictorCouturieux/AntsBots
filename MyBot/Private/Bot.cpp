@@ -37,9 +37,28 @@ void Bot::playGame()
 
 void Bot::checkAntPath()
 {
+    // state.bug << "////////////////Start///////////////" << endl;
+    // state.bug << "pathOrders size :" <<  pathOrders.GetRefMap().size() << endl;
+    // state.bug << "myAnts => " ;
+    // for (Location ant : state.myAnts)
+    // {
+    //     state.bug << " (" << ant.row << ":" << ant.col << ") ";
+    // }
+    // state.bug << endl;
+    // for (const auto& po : pathOrders.GetRefMap()) {
+    //     state.bug << "antPath => (" << po.first.row << ":" << po.first.col << ") values => ";
+    //     for (Location value : po.second)
+    //          state.bug << value.row << ":" << value.col << " ";
+    //     state.bug << endl;
+    // }
+    //state.bug << "start loop ==========>" << endl;
     for (const auto& po : pathOrders.GetMap())
     {
-
+        // state.bug << "antPath => (" << po.first.row << ":" << po.first.col << ") values => ";
+        // for (Location value : po.second)
+        //     state.bug << value.row << ":" << value.col << " ";
+        // state.bug << endl;
+        //state.bug << "find po.first = "  << ((find(state.myAnts.begin(), state.myAnts.end(), po.first) != state.myAnts.end())  ? "true" : "false") <<  endl;
         if (find(state.myAnts.begin(), state.myAnts.end(), po.first) == state.myAnts.end())
         {
             //state.bug << "erase" << endl;
@@ -48,6 +67,7 @@ void Bot::checkAntPath()
             pathOrders.GetRefMap().erase(pathOrders.GetRefMap().find(po.first));
         }
     }
+    //state.bug << "////////////////END///////////////" << endl;
 }
 
 //makes the bots moves for the turn
