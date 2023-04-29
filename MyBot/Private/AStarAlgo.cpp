@@ -3,20 +3,6 @@
 #include <map>
 #include <algorithm>
 
-float AStarAlgo::calculateH(int row, int col, Location dest) {
-    int d1 = abs(row - dest.row),
-        d2 = abs(col - dest.col),
-        dr = min(d1, state.rows-d1),
-        dc = min(d2, state.cols-d2);
-    return sqrt(dr*dr + dc*dc);
-}
-
-float AStarAlgo::calculateManhattanH(int row, int col, Location dest)
-{
-    float d = abs(row - dest.row) + abs(col - dest.col);
-    return d;
-}
-
 void AStarAlgo::setupMap()
 {
     //Initialize whole map
@@ -78,7 +64,7 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
     // Calculate h(x) with destLoc
     for (int x = 0; x < state.rows; x++) 
         for (int y = 0; y < state.cols; y++) 
-            grid[x][y].hCost = calculateManhattanH(x,y, destLoc);
+            grid[x][y].hCost = state.ManhattanDistance(Location(x,y), destLoc); // TODO : check si c'est pas mieux euclide
     
     // Init both open (nodes to be considered) and closed (nodes to ignore) lists
     vector<Node*> closedList;

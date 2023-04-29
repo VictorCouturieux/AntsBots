@@ -18,8 +18,6 @@ public:
 private:
     vector<vector<Node>> baseGrid;
     
-    float calculateH(int row, int col, Location dest);
-    float calculateManhattanH(int row, int col, Location dest);
     void ComputeCost(Node* CurrentNode, Node* NeighbourNode);
     void UpdateVertex(Node* CurrentNode, Node* NeighbourNode, vector<Node*> &openList);
 };

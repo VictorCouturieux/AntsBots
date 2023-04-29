@@ -36,6 +36,12 @@ public:
     {
         map.insert({key, value});
     }
+    void erase(TKey key)
+    {
+        auto it = map.find(key);
+        if(it != map.end())
+            map.erase(it);
+    }
     void updateKey(TKey oldKey, TKey newKey)
     {
         auto it = map.find(oldKey);

@@ -65,34 +65,29 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
             vector<Location> antPath;
             //get path if exist
             if (bot->pathOrders.containsKey(antLoc))
+            {
                 antPath = bot->pathOrders.GetMap().at(antLoc);
+                bot->state.bug << "Path at " << antLoc.ToString() << endl; 
+            }
             
             if(antPath.empty() || antPath.back() != destLoc)
             {
-                auto it =  bot->pathOrders.GetRefMap().find(antLoc);
-                if (it != bot->pathOrders.GetRefMap().end())
+                if(!antPath.empty())
+                    bot->state.bug << "WTF " << destLoc.ToString() << " " << antPath.back().ToString() << endl; 
+                if (bot->pathOrders.containsKey(antLoc))
+                {
                     //remove potential existing path
-                    bot->pathOrders.GetRefMap().erase(it);
-                
+                    bot->pathOrders.erase(antLoc);
+                }
                 //Call A* function
                 antPath = aStarPathFinding->aStar(antLoc, destLoc);
                 if (antPath.size() > 0)
                 {
                     //remove first step because it equals to Key
-                    //bot->state.bug << "remove first step because it equals to Key" << endl;
                     antPath.erase(antPath.begin());
-                
-                    //bot->state.bug << "START insert the new value" << endl;
-                
-                    //bot->state.bug << "antPath size = " << antPath.size() << endl;
-                    //bot->state.bug << "chosen antPath => (" << antLoc.row << ":" << antLoc.col << ") values => ";
-                    // for (Location value : antPath)
-                    //      bot->state.bug << value.row << ":" << value.col << " ";
-                    //bot->state.bug << endl;
                 
                     //insert the new value
                     bot->pathOrders.insert(antLoc, antPath);
-                    //bot->state.bug << "END insert the new value" << endl;
                 }
             }
             //if (antPath.size() != 0) bot->state.bug << "bot->state.isFree(antPath[0])) = " << std::noboolalpha << bot->state.isFree(antPath[0]) << endl;

@@ -47,7 +47,7 @@ void State::makeMove(const Location &loc, int direction)
 };
 
 //returns the euclidean distance between two locations with the edges wrapped
-double State::distance(const Location &loc1, const Location &loc2)
+double State::EuclideanDistance(const Location &loc1, const Location &loc2)
 {
     int d1 = abs(loc1.row-loc2.row),
         d2 = abs(loc1.col-loc2.col),
@@ -56,22 +56,19 @@ double State::distance(const Location &loc1, const Location &loc2)
     return sqrt(dr*dr + dc*dc);
 };
 
+//returns the euclidean distance between two locations with the edges wrapped
+double State::ManhattanDistance(const Location &loc1, const Location &loc2)
+{
+    float d = abs(loc1.row - loc2.row) + abs(loc1.col - loc2.col);
+    return d;
+};
+
 //returns the new location from moving in a given direction with the edges wrapped
 Location State::getLocation(const Location &loc, int direction)
 {
     return Location( (loc.row + DIRECTIONS[direction][0] + rows) % rows,
                      (loc.col + DIRECTIONS[direction][1] + cols) % cols );
 };
-
-/*
-    This function will update update the lastSeen value for any squares currently
-    visible by one of your live ants.
-
-    BE VERY CAREFUL IF YOU ARE GOING TO TRY AND MAKE THIS FUNCTION MORE EFFICIENT,
-    THE OBVIOUS WAY OF TRYING TO IMPROVE IT BREAKS USING THE EUCLIDEAN METRIC, FOR
-    A CORRECT MORE EFFICIENT IMPLEMENTATION, TAKE A LOOK AT THE GET_VISION FUNCTION
-    IN ANTS.PY ON THE CONTESTS GITHUB PAGE.
-*/
 
 bool State::directAccessTarget(const Location &loc1, const Location &loc2)
 {
@@ -102,6 +99,16 @@ bool State::directAccessTarget(const Location &loc1, const Location &loc2)
     return true;
 }
 
+/*
+    This function will update update the lastSeen value for any squares currently
+    visible by one of your live ants.
+
+    BE VERY CAREFUL IF YOU ARE GOING TO TRY AND MAKE THIS FUNCTION MORE EFFICIENT,
+    THE OBVIOUS WAY OF TRYING TO IMPROVE IT BREAKS USING THE EUCLIDEAN METRIC, FOR
+    A CORRECT MORE EFFICIENT IMPLEMENTATION, TAKE A LOOK AT THE GET_VISION FUNCTION
+    IN ANTS.PY ON THE CONTESTS GITHUB PAGE.
+*/
+
 void State::updateVisionInformation()
 {
     std::queue<Location> locQueue;
@@ -125,7 +132,7 @@ void State::updateVisionInformation()
             {
                 nLoc = getLocation(cLoc, d);
 
-                if(!visited[nLoc.row][nLoc.col] && distance(sLoc, nLoc) <= viewradius)
+                if(!visited[nLoc.row][nLoc.col] && ManhattanDistance(sLoc, nLoc) <= viewradius)
                 {
                     grid[nLoc.row][nLoc.col].isVisible = 1;
                     locQueue.push(nLoc);

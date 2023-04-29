@@ -12,7 +12,7 @@ void GatheringFood::makeMoves()
     for(Location food : bot->state.food)
         for(Location ant : bot->state.myAnts)
         {
-            const double distance = bot->state.distance(ant, food);
+            const double distance = bot->state.ManhattanDistance(ant, food);
             foodRoutes[ID++] = Route(ant, food, distance);
         }
     // Sort the foodRoutes list in a way that we have the shortests distances first
@@ -25,7 +25,6 @@ void GatheringFood::makeMoves()
             {
                 //bot->state.bug << "food to far" << endl;
             }
-    //bot->state.bug << "ant found food" << endl;
 
     /////       ***** Attacking ennemies *****      /////
     // add new hills to set
@@ -39,42 +38,32 @@ void GatheringFood::makeMoves()
         for(Location ant : bot->state.myAnts)
             if (!bot->orders.containsValue(ant))
             {
-                const double distance = bot->state.distance(ant, hillLoc);
+                const double distance = bot->state.ManhattanDistance(ant, hillLoc);
                 hillRoutes.emplace_back(ant, hillLoc, distance);
             }
     sort( hillRoutes.begin(), hillRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
     
     for (Route route : hillRoutes)
     {
-        //bot->state.bug << "Start hill route : " << route.ToString() << endl;
         doMoveLocation(route.Start, route.End, route.Distance <= bot->state.viewradius * 2.5);
-        //bot->state.bug << "food : ant found road to hill" << endl;
     }
     
-    //bot->state.bug << "Exploration" << endl;
     /////       ***** Exploration *****      /////
     // explore unseen areas
     for(Location antLoc : bot->state.myAnts)
     {
-        //bot->state.bug << "Ant at " << antLoc.ToString() << endl;
-        //bot->state.bug << "Orders : " << endl;
-        //for(auto pair : bot->orders)
-        //    bot->state.bug << "Ant " << pair.second.ToString() << " -> " << pair.first.ToString() << endl;
         // If the ant doesn't have any route assigned
         if (!bot->orders.containsValue(antLoc))
         {
-            //bot->state.bug << antLoc.ToString() << " Not occupied!!" << endl;
             vector<Route> unseenRoutes;
             for (Location unseenLoc  : bot->unseenLocations)
             {
-                const double distance = bot->state.distance(antLoc, unseenLoc);
+                const double distance = bot->state.ManhattanDistance(antLoc, unseenLoc);
                 unseenRoutes.push_back(Route(antLoc, unseenLoc, distance));
             }
             
             sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
-            //bot->state.bug << antLoc.ToString() << "Unseen : " << endl;
-            //for(auto r : unseenRoutes)
-                //bot->state.bug << "Ant " << r.ToString() << " -> " << r.ToString() << endl;
+
             for (Route route : unseenRoutes)
             {
                 if(doMoveLocation(route.Start, route.End, unseenRoutes.size() < 10 && route.Distance <= bot->state.viewradius))

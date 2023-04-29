@@ -60,7 +60,8 @@ struct State
 
     void makeMove(const Location &loc, int direction);
 
-    double distance(const Location &loc1, const Location &loc2);
+    double EuclideanDistance(const Location &loc1, const Location &loc2);
+    double ManhattanDistance(const Location &loc1, const Location &loc2);
     Location getLocation(const Location &startLoc, int direction);
     // search if ant can access to target without be blocked by wall.
     bool directAccessTarget(const Location &loc1, const Location &loc2);

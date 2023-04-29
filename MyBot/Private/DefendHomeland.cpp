@@ -11,7 +11,7 @@ void DefendHomeland::makeMoves()
     for(Location food : bot->state.food)
         for(Location ant : bot->state.myAnts)
         {
-            const double distance = bot->state.distance(ant, food);
+            const double distance = bot->state.ManhattanDistance(ant, food);
             foodRoutes[ID++] = Route(ant, food, distance);
         }
     // Sort the foodRoutes list in a way that we have the shortests distances first
@@ -33,7 +33,7 @@ void DefendHomeland::makeMoves()
             vector<Route> unseenRoutes;
             for (Location unseenLoc  : bot->unseenLocations)
             {
-                const double distance = bot->state.distance(antLoc, unseenLoc);
+                const double distance = bot->state.ManhattanDistance(antLoc, unseenLoc);
                 unseenRoutes.push_back(Route(antLoc, unseenLoc, distance));
             }
             sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
