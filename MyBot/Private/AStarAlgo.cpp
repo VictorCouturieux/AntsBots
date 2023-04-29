@@ -33,7 +33,7 @@ void AStarAlgo::ComputeCost(Node* CurrentNode, Node* NeighbourNode)
         // Update Neighbour node's cost
         NeighbourNode->gCost = CurrentNode->gCost + cost;
         NeighbourNode->fCost = NeighbourNode->gCost + NeighbourNode->hCost;
-        //state.bug << " - " << NeighbourNode->ToString() << endl;
+
     }
 }
 
@@ -103,7 +103,6 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
                 array< int, 2 > directions;
                 if (!path.empty() && state.getClosestDirections(path[path.size()-1], newLoc, directions) == 2)
                 {
-                    //if (state.isFree(state.getLocation(antLoc, directions[0])))
                     Location loc = state.getLocation(antLoc, directions[0]);
                     if (!state.grid[loc.row][loc.col].isWater)
                     {
@@ -145,19 +144,30 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
                 //     state.bug << "Node inexistant" << endl;
                 // TODO : vérifier si abs(x) + abs(y) == 2 : donc si diag, puis vérifier position libre en manhattan
 
-                
+                // If we are analysing a diagonal, we have to check if both of col and row nodes are water tiles
                 if (abs(x) + abs(y) == 2)
                 {
+                    Node* RowNode = &grid[CurrentNode->Position.row][posY];
+                    Node* ColNode = &grid[posX][CurrentNode->Position.col];
+                    if(find(closedList.begin(), closedList.end(), RowNode) == closedList.end()
+                        && state.grid[RowNode->Position.row][RowNode->Position.col].isWater)
+                    {
+                        closedList.push_back(RowNode);
+                    }
+                    if(find(closedList.begin(), closedList.end(), ColNode) == openList.end()
+                        && state.grid[ColNode->Position.row][ColNode->Position.col].isWater)
+                    {
+                        closedList.push_back(ColNode);
+                    }
+                    /*
                     Location newRowLoc = Location(CurrentNode->Position.row, posY);
                     Location newColLoc = Location(posX, CurrentNode->Position.col);
-                    //if (!state.isFree(newRowLoc) + !state.isFree(newColLoc) == 2)
                     if (state.grid[newRowLoc.row][newRowLoc.col].isWater + state.grid[newColLoc.row][newColLoc.col].isWater == 2)
                     {
-                        //state.bug << "Node unreachable" << endl;
                         closedList.push_back(NeighbourNode);
-                    }
-                //}else if(state.isFree(NeighbourNode->Position))
-                }else if (!state.grid[NeighbourNode->Position.row][NeighbourNode->Position.col].isWater)
+                    }*/
+                }
+                else if (!state.grid[NeighbourNode->Position.row][NeighbourNode->Position.col].isWater)
                 {
                     //state.bug << "Node free : " << NeighbourNode->Position.ToString() << endl;
                     // If the neighbour is not already analysed (not in closed or open lists)

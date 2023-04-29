@@ -59,29 +59,34 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
     if (find(bot->state.myAnts.begin(), bot->state.myAnts.end(), antLoc) != bot->state.myAnts.end())
     {
         Location nextMove;
-        if(pathFinding) // && bot->state.directAccessTarget(antLoc, destLoc)
+        
+        // If we allow the ant to use the pathfinding
+        if(pathFinding)
         {
-            // init default empty value
             vector<Location> antPath;
-            //get path if exist
+
+            // If the path was already calculated, we recover it
             if (bot->pathOrders.containsKey(antLoc))
             {
                 antPath = bot->pathOrders.GetMap().at(antLoc);
-                bot->state.bug << "Path at " << antLoc.ToString() << endl; 
-            }
-            
-            if(antPath.empty() || antPath.back() != destLoc)
-            {
-                if(!antPath.empty())
-                    bot->state.bug << "WTF " << destLoc.ToString() << " " << antPath.back().ToString() << endl; 
-                if (bot->pathOrders.containsKey(antLoc))
+                bot->state.bug << "Path at " << antLoc.ToString() << endl;
+                /*
+                if (antPath.back() != destLoc)
                 {
                     //remove potential existing path
                     bot->pathOrders.erase(antLoc);
+                    antPath.clear();
                 }
+                 */
+            }
+
+            // If there is no path, or if the destination changed, we build a new path with A*
+            if(antPath.empty())
+            {
                 //Call A* function
                 antPath = aStarPathFinding->aStar(antLoc, destLoc);
-                if (antPath.size() > 0)
+                
+                if (!antPath.empty())
                 {
                     //remove first step because it equals to Key
                     antPath.erase(antPath.begin());
@@ -90,8 +95,8 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
                     bot->pathOrders.insert(antLoc, antPath);
                 }
             }
-            //if (antPath.size() != 0) bot->state.bug << "bot->state.isFree(antPath[0])) = " << std::noboolalpha << bot->state.isFree(antPath[0]) << endl;
-            if (antPath.size() != 0 && bot->state.isFree(antPath[0]))
+
+            if (!antPath.empty() && bot->state.isFree(antPath[0]))
             {
                 //setup next step
                 nextMove = Location(antPath[0].row, antPath[0].col);
