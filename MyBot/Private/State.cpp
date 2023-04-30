@@ -132,7 +132,7 @@ void State::updateVisionInformation()
             {
                 nLoc = getLocation(cLoc, d);
 
-                if(!visited[nLoc.row][nLoc.col] && ManhattanDistance(sLoc, nLoc) <= viewradius)
+                if(!visited[nLoc.row][nLoc.col] && EuclideanDistance(sLoc, nLoc) <= viewradius)
                 {
                     grid[nLoc.row][nLoc.col].isVisible = 1;
                     locQueue.push(nLoc);

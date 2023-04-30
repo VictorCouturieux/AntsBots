@@ -159,13 +159,6 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
                     {
                         closedList.push_back(ColNode);
                     }
-                    /*
-                    Location newRowLoc = Location(CurrentNode->Position.row, posY);
-                    Location newColLoc = Location(posX, CurrentNode->Position.col);
-                    if (state.grid[newRowLoc.row][newRowLoc.col].isWater + state.grid[newColLoc.row][newColLoc.col].isWater == 2)
-                    {
-                        closedList.push_back(NeighbourNode);
-                    }*/
                 }
                 else if (!state.grid[NeighbourNode->Position.row][NeighbourNode->Position.col].isWater)
                 {
@@ -184,10 +177,6 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
                 }
             }
     }
-    state.bug << "nb turns of search : " << index << endl;
-    state.bug << "openList size = " << openList.size() << " // closedList size = " << closedList.size() << endl;
-    state.bug << "MyAnts size = " << state.myAnts.size() << endl;
-    state.bug << "antPath size = " << path.size() << endl;
     state.bug << "----Pathfinding ended----" << endl;
     return path;
 }

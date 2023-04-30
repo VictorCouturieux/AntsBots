@@ -8,20 +8,15 @@ void Conquest::makeMoves()
 
     
     /////       ***** Attacking ennemies *****      /////
-    // add new hills to set
-    for (Location enemyHill : bot->state.enemyHills)
-        if (std::find(bot->enemyHillsFounded.begin(), bot->enemyHillsFounded.end(), enemyHill) == bot->enemyHillsFounded.end())
-            bot->enemyHillsFounded.push_back(enemyHill);
-
     // attack hills
-    vector<Route> hillRoutes( nbAnts*bot->enemyHillsFounded.size());
+    vector<Route> hillRoutes;
     int ID=0;
-    for (Location hillLoc : bot->enemyHillsFounded)
+    for (Location hillLoc : bot->state.enemyHills)
         for(Location ant : bot->state.myAnts)
             if (!bot->orders.containsValue(ant))
             {
                 const double distance = bot->state.ManhattanDistance(ant, hillLoc);
-                hillRoutes[ID++] = Route(ant, hillLoc, distance);
+                hillRoutes.emplace_back(ant, hillLoc, distance);
             }
     sort( hillRoutes.begin(), hillRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
     for (Route route : hillRoutes)

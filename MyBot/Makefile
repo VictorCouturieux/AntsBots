@@ -19,7 +19,6 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean: 
 	-rm -f ${EXECUTABLE} ${OBJECTS} 
-	-rm -f debug.txt
 
 .PHONY: all clean
 

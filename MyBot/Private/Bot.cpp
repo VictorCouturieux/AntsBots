@@ -39,8 +39,11 @@ void Bot::checkAntPath()
 {
     for (const auto& po : pathOrders.GetMap())
     {
-        if (find(state.myAnts.begin(), state.myAnts.end(), po.first) == state.myAnts.end())
+        if (po.second.empty() || find(state.myAnts.begin(), state.myAnts.end(), po.first) == state.myAnts.end())
+        {
+            state.bug << "Erasing " << po.first.ToString() << " key "<< endl;
             pathOrders.erase(po.first);
+        }
     }
 }
 

@@ -16,8 +16,9 @@ Behaviour::Behaviour(Bot* _bot, GameState _type)
 
 void Behaviour::makeMoves()
 {
-    //bot->state.bug << "Test" << endl;
-
+    // check if path affected to a ant by position
+    bot->checkAntPath();
+    
     aStarPathFinding->setupMap();
     
     // Remove any tiles that can be seen
@@ -25,6 +26,8 @@ void Behaviour::makeMoves()
     {
         Location loc = bot->unseenLocations[i];
         if (bot->state.grid[loc.row][loc.col].isVisible)
+            bot->unseenLocations.erase(bot->unseenLocations.begin() + i);
+        if (bot->state.grid[loc.row][loc.col].isWater)
             bot->unseenLocations.erase(bot->unseenLocations.begin() + i);
     }
     
@@ -69,15 +72,13 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
             if (bot->pathOrders.containsKey(antLoc))
             {
                 antPath = bot->pathOrders.GetMap().at(antLoc);
-                bot->state.bug << "Path at " << antLoc.ToString() << endl;
-                /*
+                // If the targeted location of the path is not the destLoc, it means that we changed path
                 if (antPath.back() != destLoc)
                 {
                     //remove potential existing path
                     bot->pathOrders.erase(antLoc);
                     antPath.clear();
                 }
-                 */
             }
 
             // If there is no path, or if the destination changed, we build a new path with A*
@@ -85,7 +86,9 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
             {
                 //Call A* function
                 antPath = aStarPathFinding->aStar(antLoc, destLoc);
-                
+
+                // TODO : Just return the path without the current antLoc
+                // Remove the first step, which is equal to the current antLoc
                 if (!antPath.empty())
                 {
                     //remove first step because it equals to Key
@@ -106,10 +109,6 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
                 
                 //remove the next step of path
                 bot->pathOrders.GetRefMap()[nextMove].erase(bot->pathOrders.GetRefMap()[nextMove].begin());
-
-                // check if path affected to a ant by position
-                bot->checkAntPath();
-                
             }
             else
             {
@@ -123,7 +122,6 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
         array< int, 2 > directions;
         const int nbDirections = bot->state.getClosestDirections(antLoc, nextMove, directions);
 
-        //bot->state.bug << nbDirections << " directions"  << endl;
         for (int i = 0; i < nbDirections; i++)
             if (doMoveDirection(antLoc, directions[i])) // Check collisions and do the move
             {
@@ -136,7 +134,6 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
 
 void Behaviour::moveOutFromHills()
 {
-    //bot->state.bug << "moveOutFromHills" << endl;
     for(const Location hillLoc : bot->state.myHills)
         // If there is an ant above a hill
         if(std::find(bot->state.myAnts.begin(), bot->state.myAnts.end(), hillLoc) != bot->state.myAnts.end())
