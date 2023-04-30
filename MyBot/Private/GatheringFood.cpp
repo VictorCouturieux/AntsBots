@@ -41,49 +41,7 @@ void GatheringFood::makeMoves()
     
     /////       ***** Exploration *****      /////
     // explore unseen areas
-    for(Location antLoc : bot->state.myAnts)
-    {
-        // If the ant doesn't have any route assigned
-        if (!bot->orders.containsValue(antLoc))
-        {
-            // If the ant was already previously exploring, we recover its destination and start the movement again
-            if(bot->pathOrders.containsKey(antLoc))
-            {
-                Location destLoc = bot->pathOrders.GetMap()[antLoc][bot->pathOrders.GetMap()[antLoc].size()-1];
-                doMoveLocation(antLoc, destLoc, true);
-            }
-            // Otherwise, we'll want to build a new exploring path
-            else
-            {
-                vector<Route> unseenRoutes;
-                for (Location unseenLoc  : bot->unseenLocations)
-                {
-                    // If the targeted unseen location is water, we remove it from the vector, as destination is unreachable
-                    if(bot->state.grid[unseenLoc.row][unseenLoc.col].isWater)
-                        remove(bot->unseenLocations.begin(), bot->unseenLocations.end(), unseenLoc);
-
-                    // Register the location as a route if the destination is not too far
-                    else
-                    {
-                        const double distance = bot->state.ManhattanDistance(antLoc, unseenLoc);
-                        if(distance<= bot->state.viewradius * 2.5f)
-                            unseenRoutes.push_back(Route(antLoc, unseenLoc, distance));
-                    }
-                }
-
-                // Sort to have the lower distances first
-                sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
-
-                for (Route route : unseenRoutes)
-                {
-                    if(doMoveLocation(route.Start, route.End, route.Distance <= bot->state.viewradius * 2.5f))
-                    {
-                        break;
-                    }
-                }
-            }  
-        }
-    }
+    Exploration(bot->state.viewradius * 2.5f);
     // Moving out from our hills
     moveOutFromHills();
 

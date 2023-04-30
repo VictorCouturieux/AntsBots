@@ -30,6 +30,9 @@ void Bot::playGame()
     while(cin >> state)
     {
         state.updateVisionInformation();
+        if(state.turn == 1)
+            for(auto behaviour : Behaviours)
+                behaviour.second->Init();
         makeMoves();
         endTurn();
     }
@@ -63,12 +66,12 @@ void Bot::makeMoves()
     Behaviour* CurrentBehaviour = Behaviours.at(gameState);
     const int nbAnts = CurrentBehaviour->nbAnts;
     const int nbFood = CurrentBehaviour->nbFood;
-/*
+
     switch(CurrentBehaviour->type)
     {
         case Food:
             if(nbAnts > 30) gameState = Attack;
-            else if(nbAnts < 10) gameState = Defense;
+            //else if(nbAnts < 10) gameState = Defense;
             break;
         case Defense:
             if(nbAnts > 10) gameState = Food;
@@ -76,7 +79,7 @@ void Bot::makeMoves()
         case Attack:
             if(nbAnts < 30) gameState = Food;
             break;
-    }*/
+    }
     
     CurrentBehaviour->makeMoves();
     
