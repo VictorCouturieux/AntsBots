@@ -6,7 +6,7 @@ void GatheringFood::makeMoves()
     Behaviour::makeMoves();
     
     /////       ***** Food gathering *****      /////
-    vector<Route> foodRoutes;
+    vector<Route> foodRoutes ;
     for(Location food : bot->state.food)
         for(Location ant : bot->state.myAnts)
         {
@@ -23,20 +23,11 @@ void GatheringFood::makeMoves()
 
     /////       ***** Attacking ennemies *****      /////
     // attack hills
-    vector<Route> hillRoutes;
-    for (Location hillLoc : bot->state.enemyHills)
-        for(Location ant : bot->state.myAnts)
-            if (!bot->orders.containsValue(ant))
-            {
-                const double distance = bot->state.ManhattanDistance(ant, hillLoc);
-                if(distance <= bot->state.viewradius * 2.5)
-                    hillRoutes.emplace_back(ant, hillLoc, distance);
-            }
-    sort( hillRoutes.begin(), hillRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
-    
+    /// Attack hills
+    vector<Route> hillRoutes = getShortestRoutesTo(bot->state.enemyHills, bot->state.viewradius * 2);
     for (Route route : hillRoutes)
     {
-        doMoveLocation(route.Start, route.End, route.Distance <= bot->state.viewradius * 2.5);
+        doMoveLocation(route.Start, route.End, true);
     }
     
     /////       ***** Exploration *****      /////

@@ -132,6 +132,23 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
     return false;
 }
 
+vector<Route> Behaviour::getShortestRoutesTo(vector<Location> destinations, double range)
+{
+    vector<Route> routes;
+    for (Location destLoc : destinations)
+        for(Location antLoc : bot->state.myAnts)
+            if (!bot->orders.containsValue(antLoc))
+            {
+                const double distance = bot->state.EuclideanDistance(antLoc, destLoc);
+                if(distance <= range)
+                    routes.emplace_back(antLoc, destLoc, distance);
+            }
+    // Sort the routes list in a way that we have the shortests distances first
+    sort( routes.begin(), routes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
+
+    return routes;
+}
+
 void Behaviour::Exploration(float range)
 {
     for(Location antLoc : bot->state.myAnts)

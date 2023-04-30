@@ -55,40 +55,24 @@ void Conquest::makeMoves()
         }
     }
     /// Attack ants
+    vector<Route> enemyRoutes = getShortestRoutesTo(bot->state.enemyAnts, bot->state.viewradius);
+    for (Route route : enemyRoutes)
+    {
+        doMoveLocation(route.Start, route.End, true);
+    }
+
     /// Attack hills
-    vector<Route> hillRoutes;
-    for (Location hillLoc : bot->state.enemyHills)
-        for(Location ant : bot->state.myAnts)
-            if (!bot->orders.containsValue(ant))
-            {
-                const double distance = bot->state.ManhattanDistance(ant, hillLoc);
-                if(distance <= bot->state.viewradius * 4)
-                    hillRoutes.emplace_back(ant, hillLoc, distance);
-            }
-    sort( hillRoutes.begin(), hillRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
-    
+    vector<Route> hillRoutes = getShortestRoutesTo(bot->state.enemyHills, bot->state.viewradius * 2.5);
     for (Route route : hillRoutes)
     {
         doMoveLocation(route.Start, route.End, true);
     }
     
-    /////       ***** Food gathering *****      /////
-    vector<Route> foodRoutes;
-    for(Location food : bot->state.food)
-        for(Location ant : bot->state.myAnts)
-        {
-            const double distance = bot->state.EuclideanDistance(ant, food);
-            if(distance < 20)
-                foodRoutes.emplace_back(ant, food, distance);
-        }
-    // Sort the foodRoutes list in a way that we have the shortests distances first
-    sort( foodRoutes.begin(), foodRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
-
+    /////       ***** Food gathering ***** 
+    vector<Route> foodRoutes = getShortestRoutesTo(bot->state.food, 20);
     for(Route food : foodRoutes)
         if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
             doMoveLocation(food.Start, food.End, true);
-
-
     
     /////       ***** Exploration *****      /////
     // explore unseen areas
