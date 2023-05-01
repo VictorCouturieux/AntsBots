@@ -64,7 +64,7 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
         Location nextMove;
         
         // If we allow the ant to use the pathfinding
-        if(pathFinding)
+        if(antLoc != destLoc && pathFinding)
         {
             vector<Location> antPath;
 

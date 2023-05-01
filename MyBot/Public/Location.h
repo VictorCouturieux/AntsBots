@@ -46,6 +46,18 @@ struct Location
          else
              return false;
     }
+
+    // To use + operator
+    Location operator+(const Location & other) const
+    {
+       return Location(row + other.row, col + other.col);
+    }
+    
+    // To use - operator
+    Location operator-(const Location & other) const
+    {
+        return Location(row - other.row, col - other.col);
+    }
 };
 
 struct Node

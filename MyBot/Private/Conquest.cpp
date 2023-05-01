@@ -32,11 +32,11 @@ void Conquest::Init()
 void Conquest::makeMoves()
 {
     Behaviour::makeMoves();
-    bot->state.bug << "Conquest" << endl;
+    //bot->state.bug << "Conquest" << endl;
 
     /////       ***** Attacking ennemies *****      /////
     /// Assign some ant to protect hills
-    for (Location hillLoc : bot->state.myHills)
+    /*for (Location hillLoc : bot->state.myHills)
     {
         vector<Route> closeAnts;
         for(Location ant : bot->state.myAnts)
@@ -53,7 +53,7 @@ void Conquest::makeMoves()
             if(id > Protectors.size()) break;
             doMoveLocation(route.Start, Protectors[id++], false);
         }
-    }
+    }*/
     /// Attack ants
     vector<Route> enemyRoutes = getShortestRoutesTo(bot->state.enemyAnts, bot->state.viewradius);
     for (Route route : enemyRoutes)

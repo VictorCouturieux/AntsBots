@@ -43,9 +43,59 @@ void GatheringFood::makeMoves()
         if (!bot->orders.containsValue(antLoc))
         {
             bot->state.bug << antLoc.ToString() << " doesn't have any order..." << endl;
-            //int randX = rand() % bot->state.rows;
-            //int randY = rand() % bot->state.cols;
-            //doMoveLocation(antLoc, Location(randX, randY), false);
+            int randX = rand() % bot->state.rows;
+            int randY = rand() % bot->state.cols;
+            while(bot->state.grid[randX][randY].isWater)
+            {
+                randX = rand() % bot->state.rows;
+                randY = rand() % bot->state.cols;
+            }
+            doMoveLocation(antLoc, Location(randX, randY), false);
+            
+            /*
+            vector<Route> farmRoutes ;
+            // search the closest farm Location with the ant
+            for (Location farmLoc : farmLocs->farmingList)
+            {
+                //if the farm loc is visible by ants group
+                if(bot->state.grid[farmLoc.row][farmLoc.col].isVisible)//distance < bot->state.viewradius)
+                {
+                    const double distance = bot->state.EuclideanDistance(antLoc, farmLoc);
+                    farmRoutes.emplace_back(antLoc, farmLoc, distance);
+                }
+            }
+
+            //if the closest list of farm location is not empty
+            if (!farmRoutes.empty())
+            {
+                //sort the farm location the ant found
+                sort( farmRoutes.begin(), farmRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
+                // for each route to go on farm location, we found the best way for this ant
+                for(Route farmR : farmRoutes)
+                {
+                    //if the farm location is free 
+                    if (!bot->targets.containsKey(farmR.End) && !bot->orders.containsKey(farmR.End) && !bot->state.grid[farmR.End.row][farmR.End.col].ant)
+                    {
+                        bot->state.bug << farmR.ToString() << endl;
+                        Location homeFarm = farmR.End;
+                        //if the homeFarm ant found is in the water, search the closest location on the ground
+                        if (!bot->state.grid[homeFarm.row][homeFarm.col].isWater || farmLocs->findClosestLoc(homeFarm))
+                        {
+                            doMoveLocation(farmR.Start, homeFarm, true);
+                            break;
+                        }
+                    }
+                }
+            }
+            */
         }
     }
 }
+
+
+void GatheringFood::Init()
+{
+    Behaviour::Init();
+    farmLocs = new FarmingLocation(bot->state);
+}
+
