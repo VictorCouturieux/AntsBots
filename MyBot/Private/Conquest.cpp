@@ -16,9 +16,9 @@ void Conquest::Init()
                 if(x > bot->state.rows) break; // Out of map limits
                 for(int y = hillLoc.col - range; y < hillLoc.col + range; y++)
                 {
-                    if(x == hillLoc.row && y == hillLoc.col) break; // hill loc
+                    if(x == hillLoc.row && y == hillLoc.col) break; // Hill loc
                     if(y > bot->state.cols) break; // Out of map limits
-                    if(bot->state.grid[x][y].isWater) break;
+                    if(bot->state.grid[x][y].isWater) break; // Collision 
                     if(bot->state.ManhattanDistance(hillLoc, Location(x,y)) <= range)
                         Protectors.emplace_back(x,y);
                 }
@@ -35,33 +35,16 @@ void Conquest::makeMoves()
     //bot->state.bug << "Conquest" << endl;
 
     /////       ***** Attacking ennemies *****      /////
-    /// Assign some ant to protect hills
-    /*for (Location hillLoc : bot->state.myHills)
-    {
-        vector<Route> closeAnts;
-        for(Location ant : bot->state.myAnts)
-            if (!bot->orders.containsValue(ant))
-            {
-                const double distance = bot->state.ManhattanDistance(ant, hillLoc);
-                if(distance <= bot->state.viewradius)
-                    closeAnts.emplace_back(ant, hillLoc, distance);
-            }
-        sort( closeAnts.begin(), closeAnts.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
-        int id=0;
-        for(Route route : closeAnts)
-        {
-            if(id > Protectors.size()) break;
-            doMoveLocation(route.Start, Protectors[id++], false);
-        }
-    }*/
-    /// Attack ants
+    /// TODO : Assign some ant to protect our hills
+    
+    /// Attack ants if they're close enough
     vector<Route> enemyRoutes = getShortestRoutesTo(bot->state.enemyAnts, bot->state.viewradius);
     for (Route route : enemyRoutes)
     {
         doMoveLocation(route.Start, route.End, true);
     }
 
-    /// Attack hills
+    /// Attack hills in a long range
     vector<Route> hillRoutes = getShortestRoutesTo(bot->state.enemyHills, bot->state.viewradius * 2.5);
     for (Route route : hillRoutes)
     {
@@ -69,13 +52,14 @@ void Conquest::makeMoves()
     }
     
     /////       ***** Food gathering ***** 
+    // Send ants to gather food if they're not busy yet
     vector<Route> foodRoutes = getShortestRoutesTo(bot->state.food, 20);
     for(Route food : foodRoutes)
         if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
             doMoveLocation(food.Start, food.End, true);
     
     /////       ***** Exploration *****      /////
-    // explore unseen areas
+    // Explore close unseen areas
     Exploration(bot->state.viewradius / 2.0f);
 
     // Moving out from our hills

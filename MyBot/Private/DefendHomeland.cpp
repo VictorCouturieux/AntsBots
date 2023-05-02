@@ -5,43 +5,18 @@ void DefendHomeland::makeMoves()
 {
     Behaviour::makeMoves();
     
+    /////       *****     Defense     *****      /////
+    // TODO : Everything
+    
     /////       ***** Food gathering *****      /////
-    vector<Route> foodRoutes( nbFood*nbAnts);
-    int ID=0;
-    for(Location food : bot->state.food)
-        for(Location ant : bot->state.myAnts)
-        {
-            const double distance = bot->state.ManhattanDistance(ant, food);
-            foodRoutes[ID++] = Route(ant, food, distance);
-        }
-    // Sort the foodRoutes list in a way that we have the shortests distances first
-    sort( foodRoutes.begin(), foodRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
-
+    vector<Route> foodRoutes = getShortestRoutesTo(bot->state.food, 20);
     for(Route food : foodRoutes)
         if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
-            doMoveLocation(food.Start, food.End);
-    //bot->state.bug << "ant DefHomeLand" << endl;
-
+            doMoveLocation(food.Start, food.End, true);
     
     /////       ***** Exploration *****      /////
     // explore unseen areas
-    for(Location antLoc : bot->state.myAnts)
-    {
-        // If the ant doesn't have any route assigned
-        if (!bot->orders.containsValue(antLoc))
-        {
-            vector<Route> unseenRoutes;
-            for (Location unseenLoc  : bot->unseenLocations)
-            {
-                const double distance = bot->state.ManhattanDistance(antLoc, unseenLoc);
-                unseenRoutes.push_back(Route(antLoc, unseenLoc, distance));
-            }
-            sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
-            for (Route route : unseenRoutes)
-                doMoveLocation(route.Start, route.End);
-            //bot->state.bug << "ant DefHomeLand" << endl;
-        }
-    }
+    Exploration(bot->state.viewradius / 2.0f);
 
     // Moving out from our hills
     moveOutFromHills();

@@ -43,21 +43,19 @@ void Behaviour::makeMoves()
         bot->orders.insert(hill, Location());
 }
 
-bool Behaviour::doMoveDirection(const Location& antLoc, int dir)
+bool Behaviour::doMoveDirection(Location antLoc, int dir) const
 {
     Location newLoc = bot->state.getLocation(antLoc, dir);
     if (bot->state.isFree(newLoc) && !bot->orders.containsKey(newLoc))
     {
         bot->state.makeMove(antLoc, dir);
         bot->orders.insert(newLoc, antLoc);
-        //bot->state.bug << "MOVE " << antLoc.ToString()  << "->" << newLoc.ToString() << endl << endl;
         return true;
     }
-    else
     return false;
 }
 
-bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, bool pathFinding)
+bool Behaviour::doMoveLocation(Location antLoc, Location destLoc, bool pathFinding) const
 {
     if (find(bot->state.myAnts.begin(), bot->state.myAnts.end(), antLoc) != bot->state.myAnts.end())
     {
@@ -87,7 +85,6 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
                 //Call A* function
                 antPath = aStarPathFinding->aStar(antLoc, destLoc);
 
-                // TODO : Just return the path without the current antLoc
                 // Remove the first step, which is equal to the current antLoc
                 if (!antPath.empty())
                 {
@@ -99,6 +96,7 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
                 }
             }
 
+            // Update the pathOrder, erasing the first element which is the ant location before moving
             if (!antPath.empty() && bot->state.isFree(antPath[0]))
             {
                 //setup next step
@@ -107,13 +105,12 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
                 //set new location to Key.
                 bot->pathOrders.updateKey(antLoc, nextMove);
                 
-                //remove the next step of path
+                //remove the first step of path
                 bot->pathOrders.GetRefMap()[nextMove].erase(bot->pathOrders.GetRefMap()[nextMove].begin());
             }
+            // If it can't move, stay static
             else
-            {
                 nextMove = antLoc;
-            }
         }
         else
             nextMove = destLoc;
@@ -132,7 +129,7 @@ bool Behaviour::doMoveLocation(const Location& antLoc, const Location& destLoc, 
     return false;
 }
 
-vector<Route> Behaviour::getShortestRoutesTo(vector<Location> destinations, double range)
+vector<Route> Behaviour::getShortestRoutesTo(vector<Location> destinations, double range) const
 {
     vector<Route> routes;
     for (Location destLoc : destinations)
@@ -149,7 +146,7 @@ vector<Route> Behaviour::getShortestRoutesTo(vector<Location> destinations, doub
     return routes;
 }
 
-void Behaviour::Exploration(float range)
+void Behaviour::Exploration(float range) const
 {
     for(Location antLoc : bot->state.myAnts)
     {
@@ -160,8 +157,9 @@ void Behaviour::Exploration(float range)
             if(bot->pathOrders.containsKey(antLoc))
             {
                 Location destLoc = bot->pathOrders.GetMap()[antLoc][bot->pathOrders.GetMap()[antLoc].size()-1];
-                doMoveLocation(antLoc, destLoc, true);
+                doMoveLocation(antLoc, destLoc);
             }
+            
             // Otherwise, we'll want to build a new exploring path
             else
             {
@@ -185,18 +183,14 @@ void Behaviour::Exploration(float range)
                 sort( unseenRoutes.begin(), unseenRoutes.end(), [](Route a, Route b) { return a.Distance < b.Distance; } );
 
                 for (Route route : unseenRoutes)
-                {
                     if(doMoveLocation(route.Start, route.End, true))
-                    {
                         break;
-                    }
-                }
             }  
         }
     }
 }
 
-void Behaviour::moveOutFromHills()
+void Behaviour::moveOutFromHills() const
 {
     for(const Location hillLoc : bot->state.myHills)
         // If there is an ant above a hill

@@ -10,10 +10,7 @@ struct Location
 {
     int row, col;
 
-    Location()
-    {
-        row = col = 0;
-    };
+    Location() { row = col = 0; };
 
     Location(int r, int c)
     {
@@ -21,10 +18,14 @@ struct Location
         col = c;
     };
 
+    /**
+     * \brief Convert the Location to a string, for debug purposes
+     */
     std::string ToString() const
     {
         return "[" + std::to_string(row) + ", " + std::to_string(col) + "]";
     }
+    
     // To use == operator
     bool operator==(const Location & other) const
     {
@@ -60,6 +61,9 @@ struct Location
     }
 };
 
+/*
+    struct for representing A* Node in the grid.
+*/
 struct Node
 {
     Location Position;
@@ -76,6 +80,9 @@ struct Node
         hCost = fCost = FLT_MAX;
     }
     
+    /**
+     * \brief Convert the Node to a string, for debug purposes
+     */
     std::string ToString() const
     {
         return "gCost : " + std::to_string(gCost) + " / hCost : " + std::to_string(hCost) + " / fCost : " + std::to_string(fCost) + " - Parent : " + Parent->Position.ToString();
@@ -86,6 +93,7 @@ struct Node
     {
         return fCost < other.fCost;
     }
+    // To use == operator
     bool operator==(const Node & other) const
     {
         return Position == other.Position;
