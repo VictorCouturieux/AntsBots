@@ -15,9 +15,9 @@ public:
      * \param key TKey to check
      * \return true if the map has the key
      */
-    bool containsKey(const TKey &key)
+    bool ContainsKey(const TKey &key)
     {
-        return map.find(key) != map.end();
+        return _map.find(key) != _map.end();
     }
 
     /**
@@ -25,9 +25,9 @@ public:
      * \param value TValue to check
      * \return true if the map has at least a value
      */
-    bool containsValue(const TValue &value)
+    bool ContainsValue(const TValue &value)
     {
-        for(const auto& it: map)
+        for(const auto& it: _map)
             if(it.second == value) return true;
         return false;
     }
@@ -39,7 +39,7 @@ public:
     {
         std::string str;
 
-        for(auto it = map.cbegin(); it != map.cend(); it++)
+        for(auto it = _map.cbegin(); it != _map.cend(); it++)
             str += "Key : " + static_cast<Location>(it->first).ToString() + ", Value :" + static_cast<Location>(it->second).ToString() + "\n";
         
         return str;
@@ -48,28 +48,28 @@ public:
     /**
      * \brief Clear the map
      */
-    void clear()
+    void Clear()
     {
-        map.clear();
+        _map.clear();
     }
 
     /**
      * \brief Insert an element in map
      */
-    void insert(TKey key, TValue value)
+    void Insert(TKey key, TValue value)
     {
-        map.insert({key, value});
+        _map.insert({key, value});
     }
 
     /**
      * \brief Erase an element by key
      * \param key 
      */
-    void erase(TKey key)
+    void Erase(TKey key)
     {
-        auto it = map.find(key);
-        if(it != map.end())
-            map.erase(it);
+        auto it = _map.find(key);
+        if(it != _map.end())
+            _map.erase(it);
     }
 
     /**
@@ -78,18 +78,18 @@ public:
      * \param oldKey Element value to set in newKey element, and delete after operation
      * \param newKey Element receiving the oldKey value
      */
-    void updateKey(TKey oldKey, TKey newKey)
+    void UpdateKey(TKey oldKey, TKey newKey)
     {
-        auto it = map.find(oldKey);
-        if (it != map.end()) {
-            std::swap(map[newKey], it->second);
-            map.erase(it);
+        auto it = _map.find(oldKey);
+        if (it != _map.end()) {
+            std::swap(_map[newKey], it->second);
+            _map.erase(it);
         }
     }
 
-    std::map< TKey, TValue > GetMap() { return map; }
-    std::map< TKey, TValue >& GetRefMap() { return map; }
+    std::map< TKey, TValue > GetMap() { return _map; }
+    std::map< TKey, TValue >& GetRefMap() { return _map; }
     
 private:
-    std::map< TKey, TValue > map;
+    std::map< TKey, TValue > _map;
 };

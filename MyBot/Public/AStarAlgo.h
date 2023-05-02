@@ -2,20 +2,21 @@
 
 #include "State.h"
 
-// A C++ Program to implement A* Search Algorithm
 using namespace std;
 
+/**
+ * \brief A* Search Algorithm to find the shortest path with euclidean heuristic
+ */
 class AStarAlgo
 {
 public:
-    State& state;
     
-    AStarAlgo(State& state) : state(state){}
+    AStarAlgo(State& state) : _state(state){}
 
     /**
      * \brief Initializes a 2D grid of nodes whose size is equal to the game map
      */
-    void setupMap();
+    void SetupMap();
     
     /**
      * \brief Calculate the shorter path from antLoc to destLoc
@@ -23,10 +24,11 @@ public:
      * \param destLoc Destination Location (Ending point)
      * \return Vector containing the path in the form of { [antLoc],...,[destLoc] }
      */
-    vector<Location> aStar(Location antLoc, Location destLoc);
+    vector<Location> GetPath(Location antLoc, Location destLoc);
 
 private:
-    vector<vector<Node>> baseGrid;
+    State& _state;
+    vector<vector<Node>> _baseGrid;
     
     /**
      * \brief Compute costs between CurrentNode and NeighbourNode,
@@ -34,7 +36,7 @@ private:
      * \param CurrentNode The currently accessed node
      * \param NeighbourNode The neighbour of the current node
      */
-    void ComputeCost(Node* CurrentNode, Node* NeighbourNode) const;
+    void computeCost(Node* CurrentNode, Node* NeighbourNode) const;
     
     /**
      * \brief Analyse and Update NeighbourNode if the path to it is shorter passing by the CurrentNode, and add it to the open list 
@@ -42,7 +44,7 @@ private:
      * \param NeighbourNode The neighbour of the current node
      * \param openList List of nodes to be considered
      */
-    void UpdateVertex(Node* CurrentNode, Node* NeighbourNode, vector<Node*> &openList) const;
+    void updateVertex(Node* CurrentNode, Node* NeighbourNode, vector<Node*> &openList) const;
 };
 
 

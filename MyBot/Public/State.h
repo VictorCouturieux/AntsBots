@@ -24,21 +24,24 @@ const int TDIRECTIONS = 4;
 const char CDIRECTIONS[4] = {'N', 'E', 'S', 'W'};
 const int DIRECTIONS[4][2] = { {-1, 0}, {0, 1}, {1, 0}, {0, -1} };      //{N, E, S, W}
 
+/**
+ * \brief Behaviours key enum
+ */
 enum GameState { Attack, Defense, Food };
 
-/*
-    struct to store current state information
-*/
+/**
+ * \brief Struct to store current state information
+ */
 struct State
 {
 public:
     int rows, cols,
         turn, turns,
         noPlayers;
-    double attackradius, spawnradius, viewradius;
-    double loadtime, turntime;
+    double attackRadius, spawnRadius, viewRadius;
+    double loadTime, turnTime;
     std::vector<double> scores;
-    bool gameover;
+    bool gameOver;
     int64_t seed;
 
     std::vector<std::vector<Square> > grid;

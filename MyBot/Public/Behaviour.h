@@ -10,6 +10,9 @@
 struct Bot;
 using namespace std;
 
+/**
+ * \brief State of ant, inheriting AI behaviours 
+ */
 class Behaviour
 {
 public:
@@ -26,8 +29,8 @@ public:
     int nbAnts;
     
 protected :
-    Bot* bot;
-    AStarAlgo* aStarPathFinding;
+    Bot* _bot;
+    AStarAlgo* _pathFinding;
 
     /**
      * \brief Takes a Ant location and a direction and tries to perform the move
@@ -58,7 +61,7 @@ protected :
      * \brief Set some ant to explore the map
      * \param range Allowed range around an ant position
      */
-    void Exploration(float range) const;
+    void exploration(float range) const;
  
     /**
      * \brief Move ants that are still on a hill

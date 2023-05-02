@@ -17,16 +17,16 @@ void Bot::PlayGame()
                 unseenLocations.push_back(Location(row, col));
 
     // insert behaviours in behavioursList 
-    Behaviours.insert(pair<GameState, Behaviour*>(Food, new GatheringFood(this)));
-    Behaviours.insert(pair<GameState, Behaviour*>(Defense, new DefendHomeland(this)));
-    Behaviours.insert(pair<GameState, Behaviour*>(Attack, new Conquest(this)));
+    behaviours.insert(pair<GameState, Behaviour*>(Food, new GatheringFood(this)));
+    behaviours.insert(pair<GameState, Behaviour*>(Defense, new DefendHomeland(this)));
+    behaviours.insert(pair<GameState, Behaviour*>(Attack, new Conquest(this)));
     
     //continues making moves while the game is not over
     while(cin >> state)
     {
         state.UpdateVisionInformation();
         if(state.turn == 1)
-            for(auto behaviour : Behaviours)
+            for(auto behaviour : behaviours)
                 behaviour.second->Init();
         MakeMoves();
         endTurn();
@@ -37,7 +37,7 @@ void Bot::PlayGame()
 void Bot::MakeMoves()
 {
     // get infos of ants number and food number see by ants 
-    Behaviour* CurrentBehaviour = Behaviours.at(gameState);
+    Behaviour* CurrentBehaviour = behaviours.at(gameState);
     const int nbAnts = CurrentBehaviour->nbAnts;
     const int nbFood = CurrentBehaviour->nbFood;
 
@@ -80,7 +80,7 @@ void Bot::CheckAntPath()
         // or if the ant reference in the path orders doesn't exist, remove it
         if (po.second.empty() || find(state.myAnts.begin(), state.myAnts.end(), po.first) == state.myAnts.end())
         {
-            pathOrders.erase(po.first);
+            pathOrders.Erase(po.first);
         }
     }
 }

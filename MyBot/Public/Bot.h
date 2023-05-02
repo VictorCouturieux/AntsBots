@@ -10,9 +10,9 @@
 #include "Conquest.h"
 #include "TrackerMap.h"
 
-/*
-    This struct represents your bot in the game of Ants
-*/
+/**
+ * \brief This struct represents your bot in the game of Ants
+ */
 struct Bot
 {
     State state;
@@ -31,7 +31,7 @@ struct Bot
     std::vector<Location> unseenLocations;
 
     // Behaviours list execute in order
-    std::map<GameState, Behaviour*> Behaviours;
+    std::map<GameState, Behaviour*> behaviours;
 
     Bot(){}
     

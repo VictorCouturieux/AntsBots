@@ -5,7 +5,7 @@ using namespace std;
 //constructor
 State::State()
 {
-    gameover = 0;
+    gameOver = 0;
     turn = 0;
     bug.open("./debug.txt");
 };
@@ -33,7 +33,7 @@ void State::Reset()
     for(int row=0; row<rows; row++)
         for(int col=0; col<cols; col++)
             if(!grid[row][col].isWater)
-                grid[row][col].reset();
+                grid[row][col].Reset();
 };
 
 //outputs move information to the engine
@@ -142,7 +142,7 @@ void State::UpdateVisionInformation()
             {
                 nLoc = GetLocation(cLoc, d);
 
-                if(!visited[nLoc.row][nLoc.col] && EuclideanDistance(sLoc, nLoc) <= viewradius)
+                if(!visited[nLoc.row][nLoc.col] && EuclideanDistance(sLoc, nLoc) <= viewRadius)
                 {
                     grid[nLoc.row][nLoc.col].isVisible = 1;
                     locQueue.push(nLoc);
@@ -237,7 +237,7 @@ istream& operator>>(istream &is, State &state)
     {
         if(inputType == "end")
         {
-            state.gameover = 1;
+            state.gameOver = 1;
             break;
         }
         else if(inputType == "turn")
@@ -255,9 +255,9 @@ istream& operator>>(istream &is, State &state)
         while(is >> inputType)
         {
             if(inputType == "loadtime")
-                is >> state.loadtime;
+                is >> state.loadTime;
             else if(inputType == "turntime")
-                is >> state.turntime;
+                is >> state.turnTime;
             else if(inputType == "rows")
                 is >> state.rows;
             else if(inputType == "cols")
@@ -268,18 +268,18 @@ istream& operator>>(istream &is, State &state)
                 is >> state.seed;
             else if(inputType == "viewradius2")
             {
-                is >> state.viewradius;
-                state.viewradius = sqrt(state.viewradius);
+                is >> state.viewRadius;
+                state.viewRadius = sqrt(state.viewRadius);
             }
             else if(inputType == "attackradius2")
             {
-                is >> state.attackradius;
-                state.attackradius = sqrt(state.attackradius);
+                is >> state.attackRadius;
+                state.attackRadius = sqrt(state.attackRadius);
             }
             else if(inputType == "spawnradius2")
             {
-                is >> state.spawnradius;
-                state.spawnradius = sqrt(state.spawnradius);
+                is >> state.spawnRadius;
+                state.spawnRadius = sqrt(state.spawnRadius);
             }
             else if(inputType == "ready") //end of parameter input
             {
@@ -341,7 +341,7 @@ istream& operator>>(istream &is, State &state)
             }
             else if(inputType == "go") //end of turn input
             {
-                if(state.gameover)
+                if(state.gameOver)
                     is.setstate(std::ios::failbit);
                 else
                     state.timer.start();

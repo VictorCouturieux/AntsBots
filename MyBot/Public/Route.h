@@ -14,9 +14,9 @@ public:
     /**
      * \brief Convert the Route to a string, for debug purposes
      */
-    std::string ToString();
+    std::string ToString() const;
 
-    Location Start;
-    Location End;
-    double Distance;
+    Location start;
+    Location end;
+    double distance;
 };

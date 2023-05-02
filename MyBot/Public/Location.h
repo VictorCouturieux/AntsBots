@@ -3,9 +3,9 @@
 #include <cfloat>
 #include <limits.h>
 
-/*
-    struct for representing locations in the grid.
-*/
+/**
+ * \brief Struct for representing locations in the grid.
+ */
 struct Location
 {
     int row, col;
@@ -61,21 +61,21 @@ struct Location
     }
 };
 
-/*
-    struct for representing A* Node in the grid.
-*/
+/**
+ * \brief Struct for representing A* Node in the grid.
+ */
 struct Node
 {
-    Location Position;
-    Node* Parent;
+    Location position;
+    Node* parent;
 
     int gCost;
     float hCost, fCost;
 
     Node()
     {
-        Position = Location(-1,-1);
-        Parent = nullptr;
+        position = Location(-1,-1);
+        parent = nullptr;
         gCost = INT_MAX;
         hCost = fCost = FLT_MAX;
     }
@@ -85,7 +85,7 @@ struct Node
      */
     std::string ToString() const
     {
-        return "gCost : " + std::to_string(gCost) + " / hCost : " + std::to_string(hCost) + " / fCost : " + std::to_string(fCost) + " - Parent : " + Parent->Position.ToString();
+        return "gCost : " + std::to_string(gCost) + " / hCost : " + std::to_string(hCost) + " / fCost : " + std::to_string(fCost) + " - Parent : " + parent->position.ToString();
     }
     
     // To make std::map works
@@ -96,6 +96,6 @@ struct Node
     // To use == operator
     bool operator==(const Node & other) const
     {
-        return Position == other.Position;
+        return position == other.position;
     }
 };

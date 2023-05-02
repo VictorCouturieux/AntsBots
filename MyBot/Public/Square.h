@@ -2,9 +2,9 @@
 
 #include <vector>
 
-/*
-    struct for representing a square in the grid.
-*/
+/**
+ * \brief Struct for representing a square in the grid.
+ */
 struct Square
 {
     bool isVisible, isWater, isHill, isFood;
@@ -18,7 +18,7 @@ struct Square
     };
 
     //resets the information for the square except water information
-    void reset()
+    void Reset()
     {
         isVisible = 0;
         isHill = 0;

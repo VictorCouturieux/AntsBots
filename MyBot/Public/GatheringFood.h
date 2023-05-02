@@ -3,6 +3,9 @@
 #include "Behaviour.h"
 #include "Bot.h"
 
+/**
+ * \brief Food recovering behaviour, to extend our territory with our fellow comrades
+ */
 class GatheringFood : public Behaviour
 {
 public:

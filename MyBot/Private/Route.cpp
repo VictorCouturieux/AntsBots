@@ -2,19 +2,19 @@
 
 Route::Route()
 {
-    this->Start = Location();
-    this->End = Location();
-    this->Distance = 0;
+    this->start = Location();
+    this->end = Location();
+    this->distance = 0;
 }
 
 Route::Route(Location start, Location end, double distance)
 {
-    this->Start = start;
-    this->End = end;
-    this->Distance = distance;
+    this->start = start;
+    this->end = end;
+    this->distance = distance;
 }
 
-std::string Route::ToString()
+std::string Route::ToString() const
 {
-    return "Start : " + Start.ToString() + " / End : " + End.ToString() + " / Distance" + std::to_string(Distance);
+    return "Start : " + start.ToString() + " / End : " + end.ToString() + " / Distance" + std::to_string(distance);
 }

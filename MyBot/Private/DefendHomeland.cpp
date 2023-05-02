@@ -9,14 +9,14 @@ void DefendHomeland::MakeMoves()
     // TODO : Everything
     
     /////       ***** Food gathering *****      /////
-    vector<Route> foodRoutes = getShortestRoutesTo(bot->state.food, 20);
+    vector<Route> foodRoutes = getShortestRoutesTo(_bot->state.food, 20);
     for(Route food : foodRoutes)
-        if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
-            doMoveLocation(food.Start, food.End, true);
+        if(!_bot->targets.ContainsKey(food.end) && !_bot->targets.ContainsValue(food.start))
+            doMoveLocation(food.start, food.end, true);
     
     /////       ***** Exploration *****      /////
     // explore unseen areas
-    Exploration(bot->state.viewradius / 2.0f);
+    exploration(_bot->state.viewRadius / 2.0f);
 
     // Moving out from our hills
     moveOutFromHills();

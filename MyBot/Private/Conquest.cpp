@@ -5,26 +5,26 @@ void Conquest::Init()
 {
     Behaviour::Init();
     
-    if(!Initialised && !bot->state.myHills.empty())
+    if(!_initialised && !_bot->state.myHills.empty())
     {
         int range = 2;
         
-        for (Location hillLoc : bot->state.myHills)
+        for (Location hillLoc : _bot->state.myHills)
         {
             for(int x = hillLoc.row - range; x < hillLoc.row + range; x++)
             {
-                if(x > bot->state.rows) break; // Out of map limits
+                if(x > _bot->state.rows) break; // Out of map limits
                 for(int y = hillLoc.col - range; y < hillLoc.col + range; y++)
                 {
                     if(x == hillLoc.row && y == hillLoc.col) break; // Hill loc
-                    if(y > bot->state.cols) break; // Out of map limits
-                    if(bot->state.grid[x][y].isWater) break; // Collision 
-                    if(bot->state.ManhattanDistance(hillLoc, Location(x,y)) <= range)
-                        Protectors.emplace_back(x,y);
+                    if(y > _bot->state.cols) break; // Out of map limits
+                    if(_bot->state.grid[x][y].isWater) break; // Collision 
+                    if(_bot->state.ManhattanDistance(hillLoc, Location(x,y)) <= range)
+                        _protectors.emplace_back(x,y);
                 }
             }
         }
-        Initialised = true;
+        _initialised = true;
     }
     
 }
@@ -38,29 +38,29 @@ void Conquest::MakeMoves()
     /// TODO : Assign some ant to protect our hills
     
     /// Attack ants if they're close enough
-    vector<Route> enemyRoutes = getShortestRoutesTo(bot->state.enemyAnts, bot->state.viewradius);
+    vector<Route> enemyRoutes = getShortestRoutesTo(_bot->state.enemyAnts, _bot->state.viewRadius);
     for (Route route : enemyRoutes)
     {
-        doMoveLocation(route.Start, route.End, true);
+        doMoveLocation(route.start, route.end, true);
     }
 
     /// Attack hills in a long range
-    vector<Route> hillRoutes = getShortestRoutesTo(bot->state.enemyHills, bot->state.viewradius * 2.5);
+    vector<Route> hillRoutes = getShortestRoutesTo(_bot->state.enemyHills, _bot->state.viewRadius * 2.5);
     for (Route route : hillRoutes)
     {
-        doMoveLocation(route.Start, route.End, true);
+        doMoveLocation(route.start, route.end, true);
     }
     
     /////       ***** Food gathering ***** 
     // Send ants to gather food if they're not busy yet
-    vector<Route> foodRoutes = getShortestRoutesTo(bot->state.food, 20);
+    vector<Route> foodRoutes = getShortestRoutesTo(_bot->state.food, 20);
     for(Route food : foodRoutes)
-        if(!bot->targets.containsKey(food.End) && !bot->targets.containsValue(food.Start))
-            doMoveLocation(food.Start, food.End, true);
+        if(!_bot->targets.ContainsKey(food.end) && !_bot->targets.ContainsValue(food.start))
+            doMoveLocation(food.start, food.end, true);
     
     /////       ***** Exploration *****      /////
     // Explore close unseen areas
-    Exploration(bot->state.viewradius / 2.0f);
+    exploration(_bot->state.viewRadius / 2.0f);
 
     // Moving out from our hills
     moveOutFromHills();

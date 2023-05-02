@@ -7,11 +7,11 @@
 class Conquest : public Behaviour
 {
 private:
-    bool Initialised=false;
+    bool _initialised=false;
     /**
      * \brief Diamond location around our hills
      */
-    vector<Location> Protectors; // Because even if we attack, we need to check for invaders TODO : Use these locations to protect our hills
+    vector<Location> _protectors; // Because even if we attack, we need to check for invaders TODO : Use these locations to protect our hills
 public:
     Conquest(Bot* _bot) : Behaviour(_bot, Attack) {}
     void MakeMoves() override;
