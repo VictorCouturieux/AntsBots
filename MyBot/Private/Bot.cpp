@@ -2,12 +2,6 @@
 
 using namespace std;
 
-//constructor
-Bot::Bot()
-{
-
-};
-
 //plays a single game of Ants.
 void Bot::playGame()
 {
@@ -22,6 +16,7 @@ void Bot::playGame()
             for (int col = 0; col < state.cols; col ++)
                 unseenLocations.push_back(Location(row, col));
 
+    // insert behaviours in behavioursList 
     Behaviours.insert(pair<GameState, Behaviour*>(Food, new GatheringFood(this)));
     Behaviours.insert(pair<GameState, Behaviour*>(Defense, new DefendHomeland(this)));
     Behaviours.insert(pair<GameState, Behaviour*>(Attack, new Conquest(this)));
@@ -38,39 +33,20 @@ void Bot::playGame()
     }
 };
 
-void Bot::checkAntPath()
-{
-    for (const auto& po : pathOrders.GetMap())
-    {
-        if (po.second.empty() || find(state.myAnts.begin(), state.myAnts.end(), po.first) == state.myAnts.end())
-        {
-            state.bug << "Erasing " << po.first.ToString() << " key "<< endl;
-            pathOrders.erase(po.first);
-        }
-    }
-}
-
 //makes the bots moves for the turn
 void Bot::makeMoves()
 {
-    state.bug << "" << endl;
-    state.bug << "turn " << state.turn << ":" << endl;
-    state.bug << "nb ant : " << state.myAnts.size() << endl;
-    
-    for (auto ant : state.myAnts)
-    {
-        state.bug << "[" << ant.row << ":" << ant.col << "] ";
-    }
-    state.bug << "" << endl;
-
+    // get infos of ants number and food number see by ants 
     Behaviour* CurrentBehaviour = Behaviours.at(gameState);
     const int nbAnts = CurrentBehaviour->nbAnts;
     const int nbFood = CurrentBehaviour->nbFood;
 
+    // switch behaviour according to number of ants
     switch(CurrentBehaviour->type)
     {
         case Food:
             if(nbAnts > 30) gameState = Attack;
+            //// Uncomment this to allow to go to defend state, when it will be done
             //else if(nbAnts < 10) gameState = Defense;
             break;
         case Defense:
@@ -82,17 +58,6 @@ void Bot::makeMoves()
     }
     
     CurrentBehaviour->makeMoves();
-    
-    state.bug << "nb pathOrders : " << pathOrders.GetMap().size() << endl;
-    for (const auto& kv : pathOrders.GetMap()) {
-        state.bug << "antPath => (" << kv.first.row << ":" << kv.first.col << ") values => ";
-        for (Location value : kv.second)
-            state.bug << value.row << ":" << value.col << " ";
-        state.bug << endl;
-    }
-    if (state.myAnts.size() < pathOrders.GetMap().size())
-        state.bug << "pathOrders OVER" << endl;
-    state.bug << "time taken: " << state.timer.getTime() << "ms" << endl << endl;
 };
 
 //finishes the turn
@@ -104,3 +69,18 @@ void Bot::endTurn()
 
     cout << "go" << endl;
 };
+
+
+void Bot::checkAntPath()
+{
+    //foreach Path Orders
+    for (const auto& po : pathOrders.GetMap())
+    {
+        //if the location list is empty, remove it
+        // or if the ant reference in the path orders doesn't exist, remove it
+        if (po.second.empty() || find(state.myAnts.begin(), state.myAnts.end(), po.first) == state.myAnts.end())
+        {
+            pathOrders.erase(po.first);
+        }
+    }
+}

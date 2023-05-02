@@ -70,19 +70,28 @@ Location State::getLocation(const Location &loc, int direction)
                      (loc.col + DIRECTIONS[direction][1] + cols) % cols );
 };
 
+// search if ant can access to target without be blocked by wall.
 bool State::directAccessTarget(const Location &loc1, const Location &loc2)
 {
+    //buffer location of the starting location who will go to destination location a search if a square is a water  
     Location processLoc = loc1;
+
+    // one or two direction found with getClosestDirection
     array< int, 2 > directions;
+
+    //while buffer location is not arrived to destination
     while (processLoc != loc2)
     {
         int nbDir = getClosestDirections(processLoc, loc2, directions);
         Location searchLoc;
+
+        // check if this direction is water or not
         for (int i = 0; i < nbDir; ++i)
         {
             searchLoc = getLocation(processLoc, directions[i]);
             if (grid[searchLoc.row][searchLoc.col].isWater)
             {
+                //if it's diagonal direction
                 if (nbDir == 2 && i == 0)
                 {
                     searchLoc = getLocation(processLoc, directions[abs(i - 1)]);
@@ -90,6 +99,7 @@ bool State::directAccessTarget(const Location &loc1, const Location &loc2)
                     searchLoc = getLocation(processLoc, directions[i]);
                     if (nbDir == 2 && grid[searchLoc.row][searchLoc.col].isWater) return false;
                 }
+                //if it's not diagonal direction
                 else
                     return false;
             }
@@ -143,8 +153,10 @@ void State::updateVisionInformation()
     }
 }
 
+// Check if a location isn't occupied by ant or water
 bool State::isFree(const Location& loc)
 {
+    //check all ant location 
     for (int antIdx = 0 ; antIdx < myAnts.size() ; ++antIdx )
         if ( grid[loc.row][loc.col].isWater || loc == myAnts[ antIdx ] ) 
             return false;
@@ -156,6 +168,7 @@ int State::getClosestDirections(const Location& antLoc, const Location& destLoc,
 {
     int nbDirections=0;
 
+    //check the MinMax ROW ant location and destination location & check the edge
     if (antLoc.row > destLoc.row)
         if (abs(antLoc.row - destLoc.row) > abs(destLoc.row + rows - antLoc.row))
             directions[ nbDirections++ ] = 2; // S
@@ -166,16 +179,14 @@ int State::getClosestDirections(const Location& antLoc, const Location& destLoc,
             directions[ nbDirections++ ] = 0; // N
         else
             directions[ nbDirections++ ] = 2; // S
-            
+
+    //check the MinMax COL ant location and destination location & check the edge
     if(antLoc.col > destLoc.col)
-        //directions[ nbDirections++ ] = 3; // W
         if (abs(antLoc.col - destLoc.col) > abs(destLoc.col + cols - antLoc.col))
             directions[ nbDirections++ ] = 1; // E
         else
             directions[ nbDirections++ ] = 3; // W
-            
     else if(antLoc.col < destLoc.col)
-        //directions[ nbDirections++ ] = 1; // E
         if (abs(destLoc.col - antLoc.col) > abs(antLoc.col + cols - destLoc.col))
             directions[ nbDirections++ ] = 3; // W
         else

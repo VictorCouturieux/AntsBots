@@ -26,16 +26,34 @@ struct Bot
     
     // This map tracks the foods targets and associated ants
     TrackerMap<Location, Location> targets;
+    
     // Track all location we have not seen during the game
     std::vector<Location> unseenLocations;
 
+    // Behaviours list execute in order
     std::map<GameState, Behaviour*> Behaviours;
 
-    Bot();
+    Bot(){}
+    
+    /**
+     * \brief plays a single game of Ants.
+     */
+    void playGame(); 
 
-    void playGame();    //plays a single game of Ants
+    /**
+     * \brief makes moves for a single turn
+     */
+    void makeMoves(); 
+
+    /**
+     * \brief indicates to the engine that it has made its moves    
+     */
+    void endTurn();
+
+    /**
+     * \brief check in the pathOrders list if an path have no ant reference
+     * in case, it erase this one
+     * it is used to remove a pathOrders if an ant will be dead
+     */
     void checkAntPath();
-
-    void makeMoves();   //makes moves for a single turn
-    void endTurn();     //indicates to the engine that it has made its moves    
 };
