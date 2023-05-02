@@ -31,9 +31,7 @@ enum GameState { Attack, Defense, Food };
 */
 struct State
 {
-    /*
-        Variables
-    */
+public:
     int rows, cols,
         turn, turns,
         noPlayers;
@@ -49,28 +47,25 @@ struct State
     Timer timer;
     Bug bug;
 
-    /*
-        Functions
-    */
     State();
     ~State();
 
     /**
      * \brief sets the state up
      */
-    void setup();
+    void Setup();
  
     /**
      * \brief resets all non-water squares to land and clears the bots ant vector
      */
-    void reset();
+    void Reset();
 
     /**
      * \brief outputs move information to the engine
      * \param loc The location of the ant who will make move
      * \param direction Direction where the the ant move
      */
-    void makeMove(const Location &loc, int direction);
+    void MakeMove(const Location &loc, int direction);
 
     /**
      * \brief returns the euclidean distance between two locations with the edges wrapped
@@ -94,7 +89,7 @@ struct State
      * \param direction direction where we get location
      * \return location we get
      */
-    Location getLocation(const Location &startLoc, int direction);
+    Location GetLocation(const Location &startLoc, int direction);
     
     /**
      * \brief search if ant can access to target without be blocked by wall.
@@ -102,9 +97,9 @@ struct State
      * \param loc2 searched destination 
      * \return if the way isn't bocked by water return true
      */
-    bool directAccessTarget(const Location &loc1, const Location &loc2);
+    bool DirectAccessTarget(const Location &loc1, const Location &loc2);
 
-    void updateVisionInformation();
+    void UpdateVisionInformation();
     
     /**
      * \brief Check whether the location is free or not
@@ -112,7 +107,7 @@ struct State
      * \param loc location we checked
      * \return if the location isn't ant or water return true
      */
-    bool isFree(const Location & loc);
+    bool IsFree(const Location & loc);
     
     /** 
      * \brief Takes a location and a destination and returns a list of the closest direction "as the crow flies", returning its directions array size (max:2)
@@ -121,7 +116,7 @@ struct State
      * \param directions REFERENCE of one or two directions found to go to destLoc
      * \return directions number
      */
-    int getClosestDirections(const Location &antLoc, const Location &destLoc, std::array< int, 2 > & directions);
+    int GetClosestDirections(const Location &antLoc, const Location &destLoc, std::array< int, 2 > & directions);
 };
 
 std::ostream& operator<<(std::ostream &os, const State &state);

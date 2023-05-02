@@ -19,5 +19,5 @@ public:
      * third, the ant explore the unexplored map zone
      * fourth, the ant go on a random position on map
      */
-    void makeMoves() override;
+    void MakeMoves() override;
 };

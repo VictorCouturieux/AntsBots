@@ -18,7 +18,7 @@ public:
     /**
      * \brief Make the move using according to the chosen behaviour 
      */
-    virtual void makeMoves();
+    virtual void MakeMoves();
     virtual void Init() {}
 
     GameState type;

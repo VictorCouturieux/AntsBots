@@ -17,13 +17,13 @@ State::~State()
 };
 
 //sets the state up
-void State::setup()
+void State::Setup()
 {
     grid = vector<vector<Square> >(rows, vector<Square>(cols, Square()));
 };
 
 //resets all non-water squares to land and clears the bots ant vector
-void State::reset()
+void State::Reset()
 {
     myAnts.clear();
     enemyAnts.clear();
@@ -37,11 +37,11 @@ void State::reset()
 };
 
 //outputs move information to the engine
-void State::makeMove(const Location &loc, int direction)
+void State::MakeMove(const Location &loc, int direction)
 {
     cout << "o " << loc.row << " " << loc.col << " " << CDIRECTIONS[direction] << endl;
 
-    Location nLoc = getLocation(loc, direction);
+    Location nLoc = GetLocation(loc, direction);
     grid[nLoc.row][nLoc.col].ant = grid[loc.row][loc.col].ant;
     grid[loc.row][loc.col].ant = -1;
 };
@@ -64,14 +64,14 @@ double State::ManhattanDistance(const Location &loc1, const Location &loc2)
 };
 
 //returns the new location from moving in a given direction with the edges wrapped
-Location State::getLocation(const Location &loc, int direction)
+Location State::GetLocation(const Location &loc, int direction)
 {
     return Location( (loc.row + DIRECTIONS[direction][0] + rows) % rows,
                      (loc.col + DIRECTIONS[direction][1] + cols) % cols );
 };
 
 // search if ant can access to target without be blocked by wall.
-bool State::directAccessTarget(const Location &loc1, const Location &loc2)
+bool State::DirectAccessTarget(const Location &loc1, const Location &loc2)
 {
     //buffer location of the starting location who will go to destination location a search if a square is a water  
     Location processLoc = loc1;
@@ -82,21 +82,21 @@ bool State::directAccessTarget(const Location &loc1, const Location &loc2)
     //while buffer location is not arrived to destination
     while (processLoc != loc2)
     {
-        int nbDir = getClosestDirections(processLoc, loc2, directions);
+        int nbDir = GetClosestDirections(processLoc, loc2, directions);
         Location searchLoc;
 
         // check if this direction is water or not
         for (int i = 0; i < nbDir; ++i)
         {
-            searchLoc = getLocation(processLoc, directions[i]);
+            searchLoc = GetLocation(processLoc, directions[i]);
             if (grid[searchLoc.row][searchLoc.col].isWater)
             {
                 //if it's diagonal direction
                 if (nbDir == 2 && i == 0)
                 {
-                    searchLoc = getLocation(processLoc, directions[abs(i - 1)]);
+                    searchLoc = GetLocation(processLoc, directions[abs(i - 1)]);
                     if (nbDir == 2 && grid[searchLoc.row][searchLoc.col].isWater) return false;
-                    searchLoc = getLocation(processLoc, directions[i]);
+                    searchLoc = GetLocation(processLoc, directions[i]);
                     if (nbDir == 2 && grid[searchLoc.row][searchLoc.col].isWater) return false;
                 }
                 //if it's not diagonal direction
@@ -119,7 +119,7 @@ bool State::directAccessTarget(const Location &loc1, const Location &loc2)
     IN ANTS.PY ON THE CONTESTS GITHUB PAGE.
 */
 
-void State::updateVisionInformation()
+void State::UpdateVisionInformation()
 {
     std::queue<Location> locQueue;
     Location sLoc, cLoc, nLoc;
@@ -140,7 +140,7 @@ void State::updateVisionInformation()
 
             for(int d=0; d<TDIRECTIONS; d++)
             {
-                nLoc = getLocation(cLoc, d);
+                nLoc = GetLocation(cLoc, d);
 
                 if(!visited[nLoc.row][nLoc.col] && EuclideanDistance(sLoc, nLoc) <= viewradius)
                 {
@@ -154,7 +154,7 @@ void State::updateVisionInformation()
 }
 
 // Check if a location isn't occupied by ant or water
-bool State::isFree(const Location& loc)
+bool State::IsFree(const Location& loc)
 {
     //check all ant location 
     for (int antIdx = 0 ; antIdx < myAnts.size() ; ++antIdx )
@@ -164,7 +164,7 @@ bool State::isFree(const Location& loc)
     return true;
 }
 
-int State::getClosestDirections(const Location& antLoc, const Location& destLoc, std::array<int, 2>& directions)
+int State::GetClosestDirections(const Location& antLoc, const Location& destLoc, std::array<int, 2>& directions)
 {
     int nbDirections=0;
 

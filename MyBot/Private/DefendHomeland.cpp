@@ -1,9 +1,9 @@
 #include "../Public/DefendHomeland.h"
 #include "../Public/Bot.h"
 
-void DefendHomeland::makeMoves()
+void DefendHomeland::MakeMoves()
 {
-    Behaviour::makeMoves();
+    Behaviour::MakeMoves();
     
     /////       *****     Defense     *****      /////
     // TODO : Everything

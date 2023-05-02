@@ -87,17 +87,17 @@ vector<Location> AStarAlgo::aStar(Location antLoc, Location destLoc) {
 
                 // If the Current Location has two directions from the last step, we need to transform it as a Manhattan movement
                 array< int, 2 > directions;
-                if (!path.empty() && state.getClosestDirections(path[path.size()-1], CurrentLocation, directions) == 2)
+                if (!path.empty() && state.GetClosestDirections(path[path.size()-1], CurrentLocation, directions) == 2)
                 {
-                    Location loc = state.getLocation(antLoc, directions[0]);
+                    Location loc = state.GetLocation(antLoc, directions[0]);
                     if (!state.grid[loc.row][loc.col].isWater)
                     {
-                        path.push_back(state.getLocation(path[path.size()-1], directions[0]));
-                        path.push_back(state.getLocation(path[path.size()-1], directions[1]));
+                        path.push_back(state.GetLocation(path[path.size()-1], directions[0]));
+                        path.push_back(state.GetLocation(path[path.size()-1], directions[1]));
                     } else
                     {
-                        path.push_back(state.getLocation(path[path.size()-1], directions[1]));
-                        path.push_back(state.getLocation(path[path.size()-1], directions[0]));
+                        path.push_back(state.GetLocation(path[path.size()-1], directions[1]));
+                        path.push_back(state.GetLocation(path[path.size()-1], directions[0]));
                     }
                 }
                 // Otherwise, we just need to push the only direction possible 

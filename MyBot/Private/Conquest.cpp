@@ -29,9 +29,9 @@ void Conquest::Init()
     
 }
 
-void Conquest::makeMoves()
+void Conquest::MakeMoves()
 {
-    Behaviour::makeMoves();
+    Behaviour::MakeMoves();
     //bot->state.bug << "Conquest" << endl;
 
     /////       ***** Attacking ennemies *****      /////

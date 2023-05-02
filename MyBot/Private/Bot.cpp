@@ -3,11 +3,11 @@
 using namespace std;
 
 //plays a single game of Ants.
-void Bot::playGame()
+void Bot::PlayGame()
 {
     //reads the game parameters and sets up
     cin >> state;
-    state.setup();
+    state.Setup();
     endTurn();
     
     // add all locations to unseen tiles set, run once
@@ -24,17 +24,17 @@ void Bot::playGame()
     //continues making moves while the game is not over
     while(cin >> state)
     {
-        state.updateVisionInformation();
+        state.UpdateVisionInformation();
         if(state.turn == 1)
             for(auto behaviour : Behaviours)
                 behaviour.second->Init();
-        makeMoves();
+        MakeMoves();
         endTurn();
     }
 };
 
 //makes the bots moves for the turn
-void Bot::makeMoves()
+void Bot::MakeMoves()
 {
     // get infos of ants number and food number see by ants 
     Behaviour* CurrentBehaviour = Behaviours.at(gameState);
@@ -57,21 +57,21 @@ void Bot::makeMoves()
             break;
     }
     
-    CurrentBehaviour->makeMoves();
+    CurrentBehaviour->MakeMoves();
 };
 
 //finishes the turn
 void Bot::endTurn()
 {
     if(state.turn > 0)
-        state.reset();
+        state.Reset();
     state.turn++;
 
     cout << "go" << endl;
 };
 
 
-void Bot::checkAntPath()
+void Bot::CheckAntPath()
 {
     //foreach Path Orders
     for (const auto& po : pathOrders.GetMap())

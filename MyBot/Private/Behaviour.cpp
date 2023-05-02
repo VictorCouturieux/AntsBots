@@ -7,17 +7,17 @@
 
 Behaviour::Behaviour(Bot* _bot, GameState _type)
 {
-    bot = _bot;
+    _bot = _bot;
     type = _type;
     nbFood = _bot->state.food.size();
     nbAnts = _bot->state.myAnts.size();
     aStarPathFinding = new AStarAlgo(_bot->state);
 }
 
-void Behaviour::makeMoves()
+void Behaviour::MakeMoves()
 {
     // check if path affected to a ant by position
-    bot->checkAntPath();
+    bot->CheckAntPath();
     
     aStarPathFinding->setupMap();
     
@@ -45,10 +45,10 @@ void Behaviour::makeMoves()
 
 bool Behaviour::doMoveDirection(Location antLoc, int dir) const
 {
-    Location newLoc = bot->state.getLocation(antLoc, dir);
-    if (bot->state.isFree(newLoc) && !bot->orders.containsKey(newLoc))
+    Location newLoc = bot->state.GetLocation(antLoc, dir);
+    if (bot->state.IsFree(newLoc) && !bot->orders.containsKey(newLoc))
     {
-        bot->state.makeMove(antLoc, dir);
+        bot->state.MakeMove(antLoc, dir);
         bot->orders.insert(newLoc, antLoc);
         return true;
     }
@@ -97,7 +97,7 @@ bool Behaviour::doMoveLocation(Location antLoc, Location destLoc, bool pathFindi
             }
 
             // Update the pathOrder, erasing the first element which is the ant location before moving
-            if (!antPath.empty() && bot->state.isFree(antPath[0]))
+            if (!antPath.empty() && bot->state.IsFree(antPath[0]))
             {
                 //setup next step
                 nextMove = Location(antPath[0].row, antPath[0].col);
@@ -117,7 +117,7 @@ bool Behaviour::doMoveLocation(Location antLoc, Location destLoc, bool pathFindi
         
         // Recover the closest directions to go from antLoc to destLoc
         array< int, 2 > directions;
-        const int nbDirections = bot->state.getClosestDirections(antLoc, nextMove, directions);
+        const int nbDirections = bot->state.GetClosestDirections(antLoc, nextMove, directions);
 
         for (int i = 0; i < nbDirections; i++)
             if (doMoveDirection(antLoc, directions[i])) // Check collisions and do the move

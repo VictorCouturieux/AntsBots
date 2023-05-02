@@ -38,22 +38,24 @@ struct Bot
     /**
      * \brief plays a single game of Ants.
      */
-    void playGame(); 
+    void PlayGame(); 
 
     /**
      * \brief makes moves for a single turn
      */
-    void makeMoves(); 
-
-    /**
-     * \brief indicates to the engine that it has made its moves    
-     */
-    void endTurn();
-
+    void MakeMoves(); 
+    
     /**
      * \brief check in the pathOrders list if an path have no ant reference
      * in case, it erase this one
      * it is used to remove a pathOrders if an ant will be dead
      */
-    void checkAntPath();
+    void CheckAntPath();
+
+private:
+    /**
+     * \brief indicates to the engine that it has made its moves    
+     */
+    void endTurn();
+    
 };

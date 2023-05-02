@@ -1,9 +1,9 @@
 #include "../Public/GatheringFood.h"
 #include "../Public/Bot.h"
 
-void GatheringFood::makeMoves()
+void GatheringFood::MakeMoves()
 {
-    Behaviour::makeMoves();
+    Behaviour::MakeMoves();
     
     /////       ***** Food gathering *****      /////
     vector<Route> foodRoutes ;
